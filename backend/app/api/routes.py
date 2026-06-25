@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from app.schemas.research import ResearchRequest
 from app.services.research_service import ResearchService
 
@@ -16,4 +17,7 @@ def root():
 
 @router.post("/research")
 def research(request: ResearchRequest):
-    return research_service.start_research(request.ticker)
+
+    result = research_service.start_research(request.ticker)
+
+    return result
