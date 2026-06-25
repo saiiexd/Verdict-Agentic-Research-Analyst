@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.schemas.research import ResearchRequest
 from app.services.research_service import ResearchService
+from app.schemas.response import ApiResponse
 
 router = APIRouter()
 
