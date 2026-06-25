@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from app.api.routes import router
+from app.config.settings import settings
 
 app = FastAPI(
-    title="Verdict API",
-    version="1.0.0",
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
 )
 
 app.include_router(router)
