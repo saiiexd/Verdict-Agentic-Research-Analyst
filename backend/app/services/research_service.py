@@ -1,16 +1,18 @@
-from app.agents.financial_agent import FinancialAgent
+from app.graph.workflow import graph
 
 
 class ResearchService:
 
-    def __init__(self):
-        self.financial_agent = FinancialAgent()
-
     def start_research(self, ticker: str):
 
-        financial_data = self.financial_agent.analyze(ticker)
-
-        return {
-            "status": "success",
-            "financial_data": financial_data
+        initial_state = {
+            "ticker": ticker,
+            "financial_data": None,
+            "news": None,
+            "report": None,
+            "final_report": None,
         }
+
+        result = graph.invoke(initial_state)
+
+        return result
