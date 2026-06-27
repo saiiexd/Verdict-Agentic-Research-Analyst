@@ -2,7 +2,7 @@ from app.agents.base_agent import BaseAgent
 from app.tools.google_news import GoogleNewsTool
 from app.tools.tavily_search import TavilyTool
 from app.schemas.news import NewsArticle
-
+from app.core.logger import logger
 
 class NewsAgent(BaseAgent):
     """
@@ -10,22 +10,22 @@ class NewsAgent(BaseAgent):
     a cleaned, ranked list of articles.
     """
 
-    def __init__(self):
-        self.google_tool = GoogleNewsTool()
-        self.tavily_tool = TavilyTool()
+    def __init__(self, google_tool: GoogleNewsTool, tavily_tool: TavilyTool):
+        self.google_tool = google_tool
+        self.tavily_tool = tavily_tool
 
     def analyze(self, query: str) -> list[NewsArticle]:
+        logger.info(f"NewsAgent starting analysis for: {query}")
 
         google_news = self.google_tool.search(query)
-
         tavily_news = self.tavily_tool.search(query)
 
         merged_news = google_news + tavily_news
 
         cleaned_news = self.remove_duplicates(merged_news)
-
         ranked_news = self.rank_news(cleaned_news)
 
+        logger.info(f"NewsAgent completed analysis for: {query}. Total articles: {len(ranked_news)}")
         return ranked_news
 
     def remove_duplicates(

@@ -2,6 +2,8 @@ from urllib.request import urlopen
 from xml.etree import ElementTree as ET
 
 from app.schemas.news import NewsArticle
+from app.llm.retry import with_retry
+from app.core.logger import logger
 
 
 class GoogleNewsTool:
@@ -11,7 +13,9 @@ class GoogleNewsTool:
 
     BASE_URL = "https://news.google.com/rss/search?q={}"
 
+    @with_retry(max_attempts=3, exceptions=(Exception,))
     def search(self, query: str):
+        logger.info(f"Fetching Google News for query: {query}")
         try:
             with urlopen(self.BASE_URL.format(query)) as response:
                 xml_data = response.read()

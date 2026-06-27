@@ -1,11 +1,8 @@
-from pprint import pprint
-
 from app.agents.news_agent import NewsAgent
+from app.tools.google_news import GoogleNewsTool
+from app.tools.tavily_search import TavilyTool
 
-agent = NewsAgent()
-
-articles = agent.analyze("NVIDIA")
-
-print(f"\nTotal Articles: {len(articles)}\n")
-
-pprint(articles[:5])
+def test_news_agent():
+    agent = NewsAgent(google_tool=GoogleNewsTool(), tavily_tool=TavilyTool())
+    articles = agent.analyze("NVIDIA")
+    assert isinstance(articles, list)

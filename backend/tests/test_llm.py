@@ -1,9 +1,5 @@
-from app.llm.provider import LLMProvider
+from app.llm.factory import LLMFactory
 
-llm = LLMProvider().get_llm()
-
-response = llm.invoke(
-    "Say hello in one sentence."
-)
-
-print(response.content)
+def test_llm_provider():
+    llm = LLMFactory.get_provider().get_llm()
+    assert llm is not None

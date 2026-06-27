@@ -1,19 +1,21 @@
 from app.agents.base_agent import BaseAgent
 from app.graph.state import ResearchState
 from app.llm.prompts import WRITER_PROMPT
-from app.llm.provider import LLMProvider
+from app.llm.base import AbstractLLMProvider
 from app.utils.formatter import (
     format_financial_data,
     format_news,
 )
+from app.core.logger import logger
 
 
 class WriterAgent(BaseAgent):
 
-    def __init__(self):
-        self.llm = LLMProvider().get_llm()
+    def __init__(self, llm_provider: AbstractLLMProvider):
+        self.llm = llm_provider.get_llm()
 
     def analyze(self, state: ResearchState):
+        logger.info(f"WriterAgent starting report generation for: {state['ticker']}")
 
         fd = state.get("financial_data")
         if fd is None:

@@ -1,4 +1,5 @@
 from app.graph.workflow import graph
+from app.core.logger import logger
 
 
 class ResearchService:
@@ -13,6 +14,8 @@ class ResearchService:
             "final_report": None,
         }
 
+        logger.info(f"Starting LangGraph workflow for {ticker}")
         result = graph.invoke(initial_state)
+        logger.info(f"LangGraph workflow completed for {ticker}")
 
         return result

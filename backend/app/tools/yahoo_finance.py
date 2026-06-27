@@ -1,14 +1,17 @@
 import yfinance as yf
 from app.schemas.financial import FinancialData
 from app.exceptions.research import InvalidTickerException
-
+from app.llm.retry import with_retry
+from app.core.logger import logger
 
 class YahooFinanceTool:
     """
     Handles communication with Yahoo Finance.
     """
 
+    @with_retry(max_attempts=3, exceptions=(Exception,))
     def get_company_info(self, ticker: str):
+        logger.info(f"Fetching financial data for ticker: {ticker}")
         stock = yf.Ticker(ticker)
         info = stock.info
 
