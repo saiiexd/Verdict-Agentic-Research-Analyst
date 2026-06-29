@@ -1,31 +1,40 @@
-# Workflow Diagram
-
-This document illustrates the LangGraph execution flow for the Verdict research process.
-
-## Research State Graph
+# Verdict Workflow Diagram
 
 ```mermaid
 stateDiagram-v2
-    direction TB
-    
     [*] --> START
     
     START --> financial_node
     START --> news_node
     
-    financial_node --> research_node : Updates `financial_data`
-    news_node --> research_node : Updates `news`
+    financial_node --> research_node : FinancialData
+    news_node --> research_node : list[NewsArticle]
     
-    research_node --> writer_node : Validates Data & Transitions
+    note right of financial_node
+        Yahoo Finance API
+        Handles Exceptions
+    end note
     
-    writer_node --> END : Generates `report`
+    note right of news_node
+        Google News + Tavily API
+        Handles Exceptions
+    end note
+    
+    research_node --> writer_node : Data Readiness Check
+    
+    writer_node --> critic_node : Draft ResearchReport
+    
+    critic_node --> refiner_node : CriticReport
+    
+    refiner_node --> END : Final ResearchReport
     
     END --> [*]
 ```
 
-## Node Responsibilities
-
-1. **`financial_node`**: Leverages the `FinancialAgent` to synchronously fetch real-time market data utilizing the `YahooFinanceTool`.
-2. **`news_node`**: Leverages the `NewsAgent` to concurrently fetch RSS data and semantic web search via `GoogleNewsTool` and `TavilyTool`, returning a deduplicated set of articles.
-3. **`research_node`**: Acts as an aggregation and validation barrier. Confirms that `financial_data` and `news` are populated, logging warnings gracefully if they are missing.
-4. **`writer_node`**: Injects the consolidated state context into the `WriterAgent`, invoking the abstracted LLM infrastructure to synthesize the equity research report.
+### Node Responsibilities
+- **financial**: Fetches stock fundamentals using `YahooFinanceTool`.
+- **news**: Fetches and deduplicates recent articles using `GoogleNewsTool` and `TavilyTool`.
+- **research**: Evaluates if the required data is present to proceed with report generation.
+- **writer**: Generates the first draft `ResearchReport` using the `WriterAgent` and structured LLM outputs.
+- **critic**: Critiques the draft using `CriticAgent`.
+- **refiner**: Merges the draft and critique to produce the final `ResearchReport` using `RefinerAgent`.

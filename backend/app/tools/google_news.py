@@ -16,16 +16,10 @@ class GoogleNewsTool:
     @with_retry(max_attempts=3, exceptions=(Exception,))
     def search(self, query: str):
         logger.info(f"Fetching Google News for query: {query}")
-        try:
-            with urlopen(self.BASE_URL.format(query)) as response:
-                xml_data = response.read()
-        except Exception:
-            return []
+        with urlopen(self.BASE_URL.format(query)) as response:
+            xml_data = response.read()
 
-        try:
-            root = ET.fromstring(xml_data)
-        except ET.ParseError:
-            return []
+        root = ET.fromstring(xml_data)
 
         articles = []
         for entry in root.findall("./channel/item")[:10]:

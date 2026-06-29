@@ -8,6 +8,7 @@ def test_workflow():
         news_count=None,
         research_ready=None,
         report=None,
+        critic_report=None,
         final_report=None,
         citations=[],
     )

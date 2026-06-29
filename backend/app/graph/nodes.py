@@ -39,11 +39,15 @@ def get_writer_agent() -> WriterAgent:
 
 
 def get_critic_agent() -> CriticAgent:
-    return CriticAgent()
+    return CriticAgent(
+        provider=LLMFactory.get_provider()
+    )
 
 
 def get_refiner_agent() -> RefinerAgent:
-    return RefinerAgent()
+    return RefinerAgent(
+        provider=LLMFactory.get_provider()
+    )
 
 
 # -----------------------------
@@ -54,9 +58,17 @@ def financial_node(state: ResearchState):
 
     logger.info(f"Running Financial Node | Ticker: {state['ticker']}")
 
+    if state.get("financial_data"):
+        logger.info("Financial data already present, skipping fetch.")
+        return {"financial_data": state["financial_data"]}
+
     agent = get_financial_agent()
 
-    financial_data = agent.analyze(state["ticker"])
+    try:
+        financial_data = agent.analyze(state["ticker"])
+    except Exception as e:
+        logger.error(f"Financial Node failed: {str(e)}", exc_info=True)
+        financial_data = None
 
     return {
         "financial_data": financial_data
@@ -73,7 +85,11 @@ def news_node(state: ResearchState):
 
     agent = get_news_agent()
 
-    news = agent.analyze(state["ticker"])
+    try:
+        news = agent.analyze(state["ticker"])
+    except Exception as e:
+        logger.error(f"News Node failed: {str(e)}", exc_info=True)
+        news = []
 
     return {
         "news": news
@@ -116,9 +132,12 @@ def writer_node(state: ResearchState):
 
     agent = get_writer_agent()
 
-    report = agent.analyze(state)
-
-    logger.info("Writer Node Completed")
+    try:
+        report = agent.analyze(state)
+        logger.info("Writer Node Completed")
+    except Exception as e:
+        logger.error(f"Writer Node failed: {str(e)}", exc_info=True)
+        report = None
 
     return {
         "report": report
@@ -135,11 +154,17 @@ def critic_node(state: ResearchState):
 
     agent = get_critic_agent()
 
-    critic_report = agent.analyze(
-        state["report"]
-    )
+    report = state.get("report")
+    if not report:
+        logger.warning("Critic Node skipped: No report available.")
+        return {"critic_report": None}
 
-    logger.info("Critic Node Completed")
+    try:
+        critic_report = agent.analyze(report)
+        logger.info("Critic Node Completed")
+    except Exception as e:
+        logger.error(f"Critic Node failed: {str(e)}", exc_info=True)
+        critic_report = None
 
     return {
         "critic_report": critic_report
@@ -156,12 +181,19 @@ def refiner_node(state: ResearchState):
 
     agent = get_refiner_agent()
 
-    final_report = agent.analyze(
-        state["report"],
-        state["critic_report"]
-    )
+    report = state.get("report")
+    critic_report = state.get("critic_report")
 
-    logger.info("Refiner Node Completed")
+    if not report or not critic_report:
+        logger.warning("Refiner Node skipped: Missing report or critic_report.")
+        return {"final_report": report}
+
+    try:
+        final_report = agent.analyze(report, critic_report)
+        logger.info("Refiner Node Completed")
+    except Exception as e:
+        logger.error(f"Refiner Node failed: {str(e)}", exc_info=True)
+        final_report = report  # Fallback to the original report
 
     return {
         "final_report": final_report

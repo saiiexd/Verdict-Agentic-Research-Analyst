@@ -1,45 +1,30 @@
 # API Documentation
 
-This document describes the public interface exposed by the FastAPI application.
-
 ## Endpoints
 
-### 1. Root Application Health
-- **Endpoint**: `/`
-- **Method**: `GET`
-- **Description**: Verifies that the FastAPI application is alive and accepting requests.
-- **Response** (200 OK):
-  ```json
-  {
-      "message": "Verdict Backend Running"
-  }
-  ```
+### 1. Health Check
+`GET /`
 
----
+**Response:**
+```json
+{
+    "message": "Verdict Backend Running"
+}
+```
 
-### 2. Initiate Equity Research
-- **Endpoint**: `/research`
-- **Method**: `POST`
-- **Description**: Triggers the LangGraph multi-agent workflow to collect data and generate a research report for the requested stock ticker.
+### 2. Generate Research Report
+`POST /research`
 
-#### Request Schema
-**`ResearchRequest`**
-- `ticker` (str, required): The stock symbol to analyze (e.g., "AAPL", "NVDA").
+Triggers the full LangGraph asynchronous research workflow for the specified ticker.
 
-**Example Payload**:
+**Request Schema (`ResearchRequest`):**
 ```json
 {
     "ticker": "AAPL"
 }
 ```
 
-#### Response Schema
-**`ApiResponse`**
-- `success` (bool): Indicates if the operation completed without fatal errors.
-- `message` (str): Contextual system message.
-- `data` (dict): The final resolved state of the `ResearchState` graph dict.
-
-**Example Response (200 OK)**:
+**Response Schema (`ApiResponse`):**
 ```json
 {
     "success": true,
@@ -47,27 +32,35 @@ This document describes the public interface exposed by the FastAPI application.
     "data": {
         "ticker": "AAPL",
         "financial_data": {
-            "current_price": 150.0,
-            "market_cap": ...
+            "company_name": "Apple Inc.",
+            "current_price": 185.00,
+            "pe_ratio": 29.5,
+            "...": "..."
         },
-        "news": [...],
-        "report": "### Apple Inc. Equity Research\n..."
+        "news": [
+            {
+                "title": "Apple announces new chips",
+                "url": "https://example.com/news",
+                "provider": "google_rss"
+            }
+        ],
+        "draft_report": {
+            "company_overview": "...",
+            "financial_analysis": "..."
+        },
+        "critic_report": {
+            "overall_score": 8,
+            "recommendation": "..."
+        },
+        "final_report": {
+            "company_overview": "...",
+            "financial_analysis": "..."
+        }
     }
 }
 ```
 
-#### Error Handling
-
-- **404 Not Found**: Thrown when the `YahooFinanceTool` explicitly validates that the ticker does not exist.
-  ```json
-  {
-      "detail": "Ticker 'INVALID' was not found."
-  }
-  ```
-
-- **500 Internal Server Error**: A graceful catch-all when unhandled API outages or parsing failures occur within the tool integrations or LLM generation.
-  ```json
-  {
-      "detail": "An internal server error occurred during research."
-  }
-  ```
+**Status Codes:**
+- `200 OK`: Workflow completed.
+- `404 Not Found`: Ticker is invalid or not found.
+- `500 Internal Server Error`: An unexpected failure occurred during processing.

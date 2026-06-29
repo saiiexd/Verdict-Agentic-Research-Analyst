@@ -1,33 +1,17 @@
-# Next Steps & Development Roadmap
+# Next Steps
 
-This document outlines the ordered development roadmap for expanding the Verdict multi-agent research workflow.
+## Completed Milestones
+- [x] Implement multi-agent backend using LangGraph.
+- [x] Wrap external APIs using Tools with Retry capabilities.
+- [x] Standardize schemas and LLM abstractions.
+- [x] Architecture Stabilization (Exception handling, code deduplication, logging standard).
+- [x] Achieve solid automated test coverage across agents, nodes, and APIs.
 
-## Milestone 1: Architecture Stabilization
-- [x] Refactor core infrastructure to use Dependency Injection.
-- [x] Establish abstract LLM Factory Pattern.
-- [x] Centralize structured logging and robust external retry mechanisms.
-- [x] Align test suite with architectural standards.
+## Current Milestone
+- [ ] Connect the frontend UI (Next.js/Vite) to the stable backend API.
+- [ ] Ensure end-to-end payload handling correctly maps to React states.
 
-## Milestone 2: Core Agent Expansion (Current)
-The immediate next phase involves expanding the LangGraph pipeline with specialized analytical agents.
-
-1. **Critic Agent Implementation**
-   - **Goal**: Introduce a post-generation validation node.
-   - **Responsibility**: Evaluate the `WriterAgent`'s initial report against the source financial and news context to identify hallucinations, bias, or numerical inaccuracies.
-   
-2. **Refiner Agent Implementation**
-   - **Goal**: Iterative report improvement.
-   - **Responsibility**: Takes the feedback from the Critic Agent and updates the draft to produce the `final_report`.
-
-3. **Graph Topology Update**
-   - **Transition**: `Writer` -> `Critic` -> `Refiner` -> `END` (or loops back to `Writer` conditionally).
-
-## Milestone 3: Advanced Intelligence Integration
-1. **Risk Agent**: Independently isolates macro and micro risks associated with the ticker context.
-2. **Sentiment Agent**: Analyzes the specific polarity and tone of the collected news to inject a numeric sentiment score into the `ResearchState`.
-3. **Citation Agent**: Maps LLM generated claims specifically to the source URLs fetched by the Google News and Tavily integrations.
-
-## Milestone 4: Operational Production Readiness
-1. Introduce asynchronous HTTP fetching (`httpx`) inside the Tool layer.
-2. Migrate all LangGraph nodes to async execution.
-3. Integrate Persistent Checkpointing for state resilience and UI synchronization.
+## Recommended Next Milestones
+1. **Caching Layer Implementation**: Add Redis or an in-memory store for `ResearchService` and Tools to prevent redundant identical requests within a 24-hour window.
+2. **Semantic Deduplication**: Replace the primitive exact-match title deduplication in `NewsAgent` with a fast embedding-based similarity check.
+3. **Advanced Tool Execution**: Allow the LangGraph `research_node` to iteratively loop if the critic determines the report is lacking evidence, before reaching the refiner.
