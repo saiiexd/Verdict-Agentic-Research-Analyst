@@ -7,6 +7,7 @@ from app.graph.nodes import (
     news_node,
     research_node,
     writer_node,
+    critic_node,
 )
 
 builder = StateGraph(ResearchState)
@@ -16,8 +17,9 @@ builder.add_node("financial", financial_node)
 builder.add_node("news", news_node)
 builder.add_node("research", research_node)
 builder.add_node("writer", writer_node)
+builder.add_node("critic", critic_node)
 
-# Graph
+# Graph Flow
 builder.add_edge(START, "financial")
 builder.add_edge(START, "news")
 
@@ -25,7 +27,8 @@ builder.add_edge("financial", "research")
 builder.add_edge("news", "research")
 
 builder.add_edge("research", "writer")
+builder.add_edge("writer", "critic")
+builder.add_edge("critic", END)
 
-builder.add_edge("writer", END)
-
+# Compile Graph
 graph = builder.compile()

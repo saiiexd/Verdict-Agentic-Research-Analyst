@@ -15,9 +15,26 @@ from app.core.logger import logger
 class WriterAgent(BaseAgent):
 
     def __init__(self, llm_provider: AbstractLLMProvider):
-        self.llm = llm_provider.get_llm()
+        # Some providers may return the LLM via get_llm() or may be the LLM itself.
+        llm = None
+        try:
+            llm = llm_provider.get_llm()
+        except Exception:
+            llm = None
+
+        if llm is None:
+            # fall back to provider object itself
+            llm = llm_provider
+
+        # avoid static type checkers complaining about provider attributes
+        self.llm: Any = llm
+
+        # ensure the llm supports structured output wrapper
+        if not hasattr(self.llm, "with_structured_output"):
+            raise RuntimeError("LLM provider does not support 'with_structured_output'.")
+
         # create a structured LLM wrapper for producing ResearchReport outputs
-        self.structured_llm = self.llm.with_structured_output(ResearchReport)
+        self.structured_llm = getattr(self.llm, "with_structured_output")(ResearchReport)
 
     def analyze(self, state: ResearchState):
         logger.info(f"WriterAgent starting report generation for: {state['ticker']}")

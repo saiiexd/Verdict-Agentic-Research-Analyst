@@ -67,3 +67,19 @@ def writer_node(state: ResearchState):
     agent = get_writer_agent()
     report = agent.analyze(state)
     return {"report": report}
+
+
+from app.agents.critic_agent import CriticAgent
+
+critic_agent = CriticAgent()
+
+
+def critic_node(state):
+
+    critique = critic_agent.analyze(
+        state["report"]
+    )
+
+    return {
+        "critic_report": critique
+    }
