@@ -1,13 +1,18 @@
 from abc import ABC, abstractmethod
 
+
 class AbstractLLMProvider(ABC):
-    """
-    Abstract base class for all LLM providers.
-    """
+
+    @abstractmethod
+    def invoke(self, prompt: str):
+        """
+        Invoke the language model.
+        """
+        pass
 
     @abstractmethod
     def get_llm(self):
         """
-        Returns the configured LangChain LLM instance.
+        Return the underlying LangChain model.
         """
         pass
