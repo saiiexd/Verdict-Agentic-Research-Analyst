@@ -1,4 +1,3 @@
-from typing import Any
 from app.schemas.report import ResearchReport
 from app.agents.base_agent import BaseAgent
 from app.graph.state import ResearchState

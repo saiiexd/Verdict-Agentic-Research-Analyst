@@ -1,33 +1,21 @@
 # Test Report
 
-This document records the results of the automated testing phase conducted following the architecture refactoring.
+## Summary
+The Verdict backend test suite has been successfully executed, achieving a passing rate of 100% across all 20 test cases.
 
-## Overview
-- **Test Framework**: `pytest`
-- **Environment**: Python 3.13.5
-- **Plugins**: `anyio`, `langsmith`, `asyncio`, `cov`
+## Execution Metrics
+- **Total Tests Run**: 20
+- **Passed**: 20
+- **Failed**: 0
+- **Code Coverage**: 81%
+- **Execution Time**: ~22 seconds
 
-## Execution Summary
+## Test Breakdown
+- **API Tests (`test_api.py`)**: Validates `GET /` health endpoint and `POST /research` fail-fast validation logic (returns 404 for invalid tickers).
+- **Service Tests (`test_research_service.py`)**: Mocks workflow execution and external dependencies to test the transition from API to graph cleanly.
+- **Workflow Tests (`test_workflow.py`, `test_nodes.py`)**: Fully covers graph state creation, compilation, and execution for all LangGraph nodes (Financial, News, Research, Writer, Critic, Refiner). Achieved 100% test coverage over `nodes.py` by mocking the LLM agent behaviors.
+- **Agent Tests**: Validates initialization and `invoke_structured` interactions for `CriticAgent`, `RefinerAgent`, `WriterAgent`, `NewsAgent`, and `FinancialAgent`.
+- **Tool Tests (`test_tavily.py`, `test_yahoo_finance.py`, `test_google_news.py`)**: Tests integrations with mocked external responses, ensuring no actual API calls are triggered in CI pipelines.
 
-| Module | Status | Notes |
-|--------|--------|-------|
-| `tests/test_financial_agent.py` | **PASS** | Validates constructor injection of `YahooFinanceTool` and expected structured return. |
-| `tests/test_llm.py` | **PASS** | Validates the successful initialization and invocation of the LLM provider via `LLMFactory`. |
-| `tests/test_news_agent.py` | **PASS** | Validates constructor injection of `GoogleNewsTool` and `TavilyTool`, confirming merged deduplication. |
-| `tests/test_settings.py` | **PASS** | Validates `pydantic-settings` schema behavior. Requires mock environment injection. |
-| `tests/test_workflow.py` | **PASS** | Validates LangGraph state compilation and edge definitions without syntax failures. |
-| `tests/test_yahoo_finance.py` | **PASS** | Validates network connectivity and valid fallback mechanisms via `yfinance`. |
-
-## Resolved Issues
-
-### 1. `ImportError: RemoveMessage`
-- **Root Cause**: Desynchronized dependencies between `langgraph==1.2.6` and `langchain-core==1.4.8`.
-- **Fix Applied**: Forced environment upgrade across the `langchain` suite via `pip install -r requirements.txt`, ensuring package tree cohesion.
-
-### 2. `TypeError: __init__() missing required positional argument`
-- **Root Cause**: The legacy test suite relied on global class instantiations which were broken when Dependency Injection was enforced.
-- **Fix Applied**: Refactored the imperative test scripts into functional `pytest` units, manually provisioning dependencies during the `Agent` test instantiation.
-
-### 3. Pydantic `ValidationError`
-- **Root Cause**: Execution of `test_settings.py` without actual environment variables present in the test context.
-- **Fix Applied**: Overrode initialization in `test_settings_default_tavily_key_is_empty_string` by passing explicit mock strings to satisfy the `Settings` class requirement.
+## Coverage Gaps
+The remaining 19% of code not covered largely consists of actual HTTP requests inside `GeminiProvider` and `OpenRouterProvider` and low-level data formatting edge cases. These are intentionally left uncovered in unit tests as they hit actual LLM endpoints and should be validated in end-to-end integration environments.
