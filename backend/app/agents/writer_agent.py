@@ -1,7 +1,10 @@
+from typing import Any
+from app.schemas.report import ResearchReport
 from app.agents.base_agent import BaseAgent
 from app.graph.state import ResearchState
 from app.llm.prompts import WRITER_PROMPT
 from app.llm.base import AbstractLLMProvider
+
 from app.utils.formatter import (
     format_financial_data,
     format_news,
@@ -13,6 +16,8 @@ class WriterAgent(BaseAgent):
 
     def __init__(self, llm_provider: AbstractLLMProvider):
         self.llm = llm_provider.get_llm()
+        # create a structured LLM wrapper for producing ResearchReport outputs
+        self.structured_llm = self.llm.with_structured_output(ResearchReport)
 
     def analyze(self, state: ResearchState):
         logger.info(f"WriterAgent starting report generation for: {state['ticker']}")
@@ -35,6 +40,6 @@ class WriterAgent(BaseAgent):
             news=news_text,
         )
 
-        response = self.llm.invoke(prompt)
+        report = self.structured_llm.invoke(prompt)
 
-        return response.content
+        return report
