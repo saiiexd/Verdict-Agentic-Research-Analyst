@@ -2,7 +2,7 @@ from typing import Annotated, Optional, TypedDict
 
 from app.schemas.financial import FinancialData
 from app.schemas.news import NewsArticle
-
+from app.schemas.report import ResearchReport
 
 def merge_lists(left: list, right: list) -> list:
     """
@@ -23,8 +23,8 @@ class ResearchState(TypedDict):
 
     research_ready: Optional[bool]
 
-    report: Optional[str]
-
+    report: Optional[ResearchReport]
+    
     final_report: Optional[str]
 
     citations: Annotated[list[str], merge_lists]
