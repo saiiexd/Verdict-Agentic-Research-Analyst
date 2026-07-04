@@ -1,63 +1,102 @@
 "use client";
 
-import { useAppStore } from "@/store/useAppStore";
+import * as React from "react";
+import { useState } from "react";
 import { Section, SectionHeader } from "@/components/layout/section";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { 
+  Eye, 
+  Settings2, 
+  Brain, 
+  FileText, 
+  Sliders, 
+  Keyboard, 
+  Code2, 
+  Info 
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { 
+  AppearanceSettings, 
+  WorkspacePreferences, 
+  AIPreferences, 
+  ResearchPreferences, 
+  AccessibilitySettings, 
+  KeyboardShortcutViewer, 
+  DeveloperOptions, 
+  AboutVerdict 
+} from "@/components/research/SettingsComponents";
+
+type TabId = "appearance" | "workspace" | "ai" | "research" | "accessibility" | "shortcuts" | "developer" | "about";
 
 export default function SettingsPage() {
-  const { animationsEnabled, toggleAnimations } = useAppStore();
+  const [activeTab, setActiveTab] = useState<TabId>("appearance");
+
+  const navigationItems = [
+    { id: "appearance" as TabId, label: "Appearance", icon: Eye },
+    { id: "workspace" as TabId, label: "Workspace Prefs", icon: Settings2 },
+    { id: "ai" as TabId, label: "AI Config", icon: Brain },
+    { id: "research" as TabId, label: "Research Prefs", icon: FileText },
+    { id: "accessibility" as TabId, label: "Accessibility", icon: Sliders },
+    { id: "shortcuts" as TabId, label: "Key Shortcuts", icon: Keyboard },
+    { id: "developer" as TabId, label: "Developer", icon: Code2 },
+    { id: "about" as TabId, label: "About Verdict", icon: Info },
+  ];
+
+  const renderActivePanel = () => {
+    switch (activeTab) {
+      case "appearance":
+        return <AppearanceSettings />;
+      case "workspace":
+        return <WorkspacePreferences />;
+      case "ai":
+        return <AIPreferences />;
+      case "research":
+        return <ResearchPreferences />;
+      case "accessibility":
+        return <AccessibilitySettings />;
+      case "shortcuts":
+        return <KeyboardShortcutViewer />;
+      case "developer":
+        return <DeveloperOptions />;
+      case "about":
+        return <AboutVerdict />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <Section className="max-w-4xl">
-      <SectionHeader title="Settings" subtitle="Manage your application preferences." className="mb-10 border-b border-[rgb(var(--border-default))] pb-6" />
+    <Section className="pb-24 max-w-5xl">
+      <SectionHeader title="Settings Workspace" subtitle="Tailor multi-agent orchestration, keybindings, and display density." className="mb-8 border-b border-[rgb(var(--border-default))] pb-6" />
 
-      <div className="space-y-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Appearance</CardTitle>
-            <CardDescription>Customize the visual style of Verdict.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-sm font-medium">Theme Preference</h4>
-                <p className="text-sm text-[rgb(var(--text-secondary))]">Toggle between light and dark modes.</p>
-              </div>
-              <div className="border border-[rgb(var(--border-default))] rounded-full p-1 bg-[rgb(var(--bg-elevated))]">
-                <ThemeToggle />
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between border-t border-[rgb(var(--border-default))] pt-6">
-              <div>
-                <h4 className="text-sm font-medium">UI Animations</h4>
-                <p className="text-sm text-[rgb(var(--text-secondary))]">Enable or disable Framer Motion animations.</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer" 
-                  checked={animationsEnabled}
-                  onChange={toggleAnimations}
-                />
-                <div className="w-11 h-6 bg-[rgb(var(--bg-subtle))] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[rgb(var(--accent-secondary))] border border-[rgb(var(--border-default))]"></div>
-              </label>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start w-full select-none">
+        {/* Navigation Sidebar (3/12) */}
+        <aside className="md:col-span-3 flex flex-col gap-1 w-full text-left">
+          {navigationItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={cn(
+                "w-full px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-3 transition-all cursor-pointer text-left",
+                activeTab === item.id 
+                  ? "bg-[rgb(var(--accent-primary))] text-[rgb(var(--bg-surface))]" 
+                  : "text-[rgb(var(--text-secondary))] hover:bg-[rgb(var(--bg-elevated))] hover:text-[rgb(var(--text-primary))]"
+              )}
+            >
+              <item.icon className="h-4 w-4 flex-shrink-0" />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </aside>
 
-        <Card className="opacity-50 pointer-events-none">
-          <CardHeader>
-            <CardTitle>AI Providers (Coming Soon)</CardTitle>
-            <CardDescription>Configure custom API keys for LLM execution.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm text-[rgb(var(--text-secondary))]">
-              Currently, Verdict uses the default backend provider. Custom model selection will be enabled in a future update.
-            </div>
-          </CardContent>
-        </Card>
+        {/* Configurations Panel (9/12) */}
+        <main className="md:col-span-9 rounded-2xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 md:p-8 w-full">
+          <h3 className="text-subtitle font-bold text-[rgb(var(--text-primary))] mb-6 uppercase tracking-wider pb-2 border-b border-[rgb(var(--border-default))]/45">
+            {navigationItems.find(item => item.id === activeTab)?.label} Settings
+          </h3>
+          <div className="w-full">
+            {renderActivePanel()}
+          </div>
+        </main>
       </div>
     </Section>
   );

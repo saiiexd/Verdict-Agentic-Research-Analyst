@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/store/useAppStore";
 import { Section } from "@/components/layout/section";

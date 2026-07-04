@@ -94,3 +94,15 @@ During active research, the workspace visualizes progress through specialized lo
 - **`TimelineEvent`**: A vertical execution timeline illustrating milestones (Request Received -> Financial Analysis -> Sentiment Collection -> Synthesis Drafting -> Agent Debate Review -> Refinement Packaging).
 - **`LoadingSkeleton`**: Elegant shimmers outlining the document sections in progress.
 - **Synchronized Transitions**: As the backend response finishes compiling, Framer Motion staggered transitions smoothly transition these skeletons into completed document sections, providing a premium, cohesive UI handoff.
+
+---
+
+## 5. Visual Analytics & Dashboards (`ReportAnalytics.tsx`)
+
+To complement the text report segments, the layout coordinates high-fidelity widgets in `src/components/research/ReportAnalytics.tsx`:
+
+- **`ValuationMetricsChart`**: A Recharts-driven bar chart illustrating core ratios (P/E, ROE %, Gross Margin %, Beta).
+- **`SentimentDistributionChart`**: A Recharts-driven pie chart grouping news articles dynamically into positive, neutral, and negative sentiment distribution.
+- **`EvidenceConfidenceGauge`**: A radial SVG gauge indicating validation confidence level (critic score).
+- **`WorkflowAnalyticsPanel`**: Displays total pipeline duration, active agent nodes, logic check status, and dynamic risk categorization metrics.
+- **`ComparativeAnalysisView`**: Instantiates a mock Peer comparison dashboard, preparing visual layout structures for future multi-ticker support.

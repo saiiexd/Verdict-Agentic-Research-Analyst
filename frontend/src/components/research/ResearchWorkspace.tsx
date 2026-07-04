@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { WorkspaceLayout } from "./WorkspaceLayout";
 import { WorkspaceHeader } from "./WorkspaceHeader";
 import { CommandSearch } from "./CommandSearch";
@@ -27,6 +28,7 @@ export function ResearchWorkspace({ className }: ResearchWorkspaceProps) {
   const currentResearchData = useAppStore((state) => state.currentResearchData);
   const currentResearchTicker = useAppStore((state) => state.currentResearchTicker);
   const researchError = useAppStore((state) => state.researchError);
+  const isReadingMode = useAppStore((state) => state.isReadingMode);
 
   const isPending = researchStatus === "Submitting" || researchStatus === "Running";
   const isSuccess = researchStatus === "Completed";
@@ -68,31 +70,31 @@ export function ResearchWorkspace({ className }: ResearchWorkspaceProps) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className={className}
+      className={cn("w-full max-w-7xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 py-8", className)}
     >
       <WorkspaceLayout
-        header={
+        header={!isReadingMode ? (
           <motion.div variants={itemVariants}>
             <WorkspaceHeader />
           </motion.div>
-        }
-        searchArea={
+        ) : null}
+        searchArea={!isReadingMode ? (
           <motion.div variants={itemVariants}>
             <CommandSearch onAnalyze={startResearch} isPending={isPending} />
           </motion.div>
-        }
+        ) : null}
         report={
           <motion.div
             variants={itemVariants}
             className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full"
           >
             {/* Left Column: AI Pipeline Orchestration visual list (Width: 4/12) */}
-            <div className="lg:col-span-4 w-full">
+            <div className={cn("lg:col-span-4 w-full", isReadingMode && "hidden")}>
               <AgentWorkflow stages={stages} />
             </div>
 
-            {/* Right Column: AI Research Report viewer panel output (Width: 8/12) */}
-            <div className="lg:col-span-8 w-full flex flex-col h-full">
+            {/* Right Column: AI Research Report viewer panel output (Width: 8/12 or 12/12) */}
+            <div className={cn("w-full flex flex-col h-full", isReadingMode ? "lg:col-span-12" : "lg:col-span-8")}>
               <ReportPanel 
                 reportData={currentResearchData} 
                 status={researchStatus} 
