@@ -1,46 +1,23 @@
 "use client";
 
-import { useTheme } from "next-themes";
+import * as React from "react";
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
 
-export function ThemeToggle({ className }: { className?: string }) {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+export function ThemeToggle() {
+  const { setTheme, theme, systemTheme } = useTheme();
+  const currentTheme = theme === "system" ? systemTheme : theme;
 
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return <div className="w-9 h-9" />;
-
-  const isDark = theme === "dark";
+  const toggleTheme = () => {
+    setTheme(currentTheme === "dark" ? "light" : "dark");
+  };
 
   return (
-    <button
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={cn(
-        "relative w-9 h-9 rounded-lg flex items-center justify-center",
-        "border border-[rgb(var(--border-default))]",
-        "bg-[rgb(var(--bg-elevated))]",
-        "text-[rgb(var(--text-secondary))]",
-        "hover:text-[rgb(var(--text-primary))] hover:bg-[rgb(var(--bg-subtle))]",
-        "transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--accent-primary))]",
-        className
-      )}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-    >
-      <Sun
-        className={cn(
-          "absolute w-4 h-4 transition-all duration-300",
-          isDark ? "opacity-0 rotate-90 scale-50" : "opacity-100 rotate-0 scale-100"
-        )}
-      />
-      <Moon
-        className={cn(
-          "absolute w-4 h-4 transition-all duration-300",
-          isDark ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"
-        )}
-      />
-    </button>
+    <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
+      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-[rgb(var(--text-secondary))]" />
+      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-[rgb(var(--text-secondary))]" />
+      <span className="sr-only">Toggle theme</span>
+    </Button>
   );
 }
