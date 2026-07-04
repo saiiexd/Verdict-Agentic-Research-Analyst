@@ -13,10 +13,13 @@ export const apiClient = axios.create({
 
 // ─── API Functions ──────────────────────────────────────
 export async function runResearch(ticker: string): Promise<ResearchResponse> {
-  const response = await apiClient.post<ResearchResponse>("/research", {
+  const response = await apiClient.post<{ success: boolean; message: string; data: ResearchResponse }>("/research", {
     ticker: ticker.toUpperCase(),
   });
-  return response.data;
+  if (!response.data.success) {
+    throw new Error(response.data.message);
+  }
+  return response.data.data;
 }
 
 export async function healthCheck(): Promise<{ status: string }> {

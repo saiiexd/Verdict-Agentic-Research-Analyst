@@ -1,115 +1,86 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  BarChart3,
-  BookOpen,
-  Clock,
-  Home,
-  Settings,
-  Sparkles,
+import { 
+  BarChart3, 
+  Search, 
+  History, 
+  Settings, 
+  Sparkles 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useAppStore } from "@/store/useAppStore";
 
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/research", label: "Research", icon: Sparkles },
-  { href: "/history", label: "History", icon: Clock },
-  { href: "/reports", label: "Reports", icon: BookOpen },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
+const navItems = [
+  { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
+  { name: "Research", href: "/research", icon: Search },
+  { name: "History", href: "/history", icon: History },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const sidebarOpen = useAppStore((state) => state.sidebarOpen);
 
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 h-full w-[220px] z-40",
-        "flex flex-col gap-1",
-        "bg-[rgb(var(--bg-surface))]",
-        "border-r border-[rgb(var(--border-default))]",
-        "py-6"
+        "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-[rgb(var(--border-default))] bg-[rgb(var(--bg-surface))] transition-all duration-300",
+        sidebarOpen ? "w-64" : "w-16"
       )}
     >
-      {/* Logo */}
-      <div className="px-5 mb-6">
-        <Link href="/dashboard" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-[rgb(var(--accent-primary))] flex items-center justify-center shadow-glow-accent">
-            <Sparkles className="w-4 h-4 text-white" />
+      <div className="flex h-14 items-center justify-center border-b border-[rgb(var(--border-default))]">
+        <Link href="/" className="flex items-center gap-2 overflow-hidden px-4">
+          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-[rgb(var(--accent-primary))] text-white">
+            <Sparkles className="h-4 w-4" />
           </div>
-          <span className="font-bold text-[15px] tracking-tight text-[rgb(var(--text-primary))]">
+          <span
+            className={cn(
+              "font-bold text-[15px] tracking-tight text-[rgb(var(--text-primary))] transition-opacity duration-300",
+              sidebarOpen ? "opacity-100" : "opacity-0 hidden"
+            )}
+          >
             Verdict
-          </span>
-          <span className="text-[10px] font-semibold text-[rgb(var(--accent-primary))] bg-[rgb(var(--accent-primary))]/10 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
-            AI
           </span>
         </Link>
       </div>
 
-      {/* Nav section label */}
-      <p className="px-5 text-label text-[rgb(var(--text-tertiary))] mb-1">Workspace</p>
-
-      {/* Navigation */}
-      <nav className="flex-1 px-3 space-y-0.5">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const isActive = pathname === href || pathname.startsWith(href + "/");
+      <nav className="flex-1 space-y-2 p-2 mt-4">
+        {navItems.map((item) => {
+          const isActive = pathname.startsWith(item.href);
+          const Icon = item.icon;
           return (
             <Link
-              key={href}
-              href={href}
+              key={item.name}
+              href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg",
-                "text-[13.5px] font-medium",
-                "transition-all duration-150",
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? [
-                      "bg-[rgb(var(--accent-primary))]/10",
-                      "text-[rgb(var(--accent-primary))]",
-                    ]
-                  : [
-                      "text-[rgb(var(--text-secondary))]",
-                      "hover:bg-[rgb(var(--bg-subtle))]",
-                      "hover:text-[rgb(var(--text-primary))]",
-                    ]
+                  ? "bg-[rgb(var(--bg-elevated))] text-[rgb(var(--text-primary))] shadow-sm border border-[rgb(var(--border-default))]"
+                  : "text-[rgb(var(--text-secondary))] hover:bg-[rgb(var(--bg-subtle))] hover:text-[rgb(var(--text-primary))]",
+                !sidebarOpen && "justify-center px-0"
               )}
+              title={!sidebarOpen ? item.name : undefined}
             >
-              <Icon
+              <Icon className={cn("h-4 w-4 flex-shrink-0", isActive && "text-[rgb(var(--accent-primary))]")} />
+              <span
                 className={cn(
-                  "w-4 h-4 flex-shrink-0 transition-all duration-150",
-                  isActive ? "text-[rgb(var(--accent-primary))]" : "text-[rgb(var(--text-tertiary))]"
+                  "transition-opacity duration-300",
+                  sidebarOpen ? "opacity-100" : "opacity-0 hidden"
                 )}
-              />
-              {label}
-              {isActive && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[rgb(var(--accent-primary))]" />
-              )}
+              >
+                {item.name}
+              </span>
             </Link>
           );
         })}
       </nav>
-
-      {/* Bottom section */}
-      <div className="px-3 space-y-0.5 border-t border-[rgb(var(--border-default))] pt-3 mt-3">
-        <Link
-          href="/settings"
-          className={cn(
-            "flex items-center gap-3 px-3 py-2.5 rounded-lg",
-            "text-[13.5px] font-medium",
-            "text-[rgb(var(--text-secondary))]",
-            "hover:bg-[rgb(var(--bg-subtle))] hover:text-[rgb(var(--text-primary))]",
-            "transition-all duration-150"
-          )}
-        >
-          <Settings className="w-4 h-4 text-[rgb(var(--text-tertiary))]" />
-          Settings
-        </Link>
-
-        <div className="px-3 py-2 flex items-center justify-between">
-          <span className="text-caption text-[rgb(var(--text-tertiary))]">Appearance</span>
-          <ThemeToggle />
+      
+      <div className={cn("p-4 border-t border-[rgb(var(--border-default))]", !sidebarOpen && "text-center")}>
+        <div className="text-xs text-[rgb(var(--text-tertiary))] truncate">
+          {sidebarOpen ? "Verdict AI v1.0" : "v1.0"}
         </div>
       </div>
     </aside>
