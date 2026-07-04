@@ -44,7 +44,7 @@ export default function HistoryPage() {
       {filteredHistory.length === 0 ? (
         <div className="text-center py-24 bg-[rgb(var(--bg-elevated))] rounded-2xl border border-dashed border-[rgb(var(--border-strong))]">
           <p className="text-[rgb(var(--text-secondary))] mb-6">No research history found.</p>
-          <Link href="/research">
+          <Link href="/">
             <Button>
               Start Research <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

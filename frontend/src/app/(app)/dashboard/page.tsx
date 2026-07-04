@@ -17,7 +17,7 @@ export default function DashboardPage() {
     <Section>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
         <SectionHeader title="Dashboard" subtitle="Welcome back to your workspace." className="mb-0" />
-        <Link href="/research">
+        <Link href="/">
           <Button size="lg" className="shadow-glow-accent">
             New Research <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
@@ -94,7 +94,7 @@ export default function DashboardPage() {
           {recentResearch.length === 0 ? (
             <div className="py-12 text-center flex flex-col items-center">
               <p className="text-[rgb(var(--text-secondary))] mb-4">You haven&apos;t generated any research yet.</p>
-              <Link href="/research">
+              <Link href="/">
                 <Button variant="outline">Start your first report</Button>
               </Link>
             </div>

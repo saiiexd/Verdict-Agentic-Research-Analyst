@@ -14,8 +14,8 @@ import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
 
 const navItems = [
+  { name: "Workspace", href: "/", icon: Search },
   { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
-  { name: "Research", href: "/research", icon: Search },
   { name: "History", href: "/history", icon: History },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
@@ -49,7 +49,7 @@ export function Sidebar() {
 
       <nav className="flex-1 space-y-2 p-2 mt-4">
         {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
+          const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           const Icon = item.icon;
           return (
             <Link
