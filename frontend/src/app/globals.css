@@ -270,3 +270,38 @@
   }
   ::-webkit-scrollbar-thumb:hover { background: rgb(var(--text-tertiary)); }
 }
+
+/* ─── Print Styles for PDF Export ──────────────────────── */
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: A4 portrait;
+  }
+  
+  /* Hide navigation, sidebars, and interactive buttons */
+  nav, aside, header, footer, button, .print-hidden {
+    display: none !important;
+  }
+
+  /* Reset layout for printing */
+  main, .bento-grid {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Ensure text colors are pure black for contrast */
+  body, .text-primary, .text-secondary {
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  /* Avoid breaking elements across pages */
+  .bento-grid > div, article, section, .prose > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 2rem !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+  }
+}

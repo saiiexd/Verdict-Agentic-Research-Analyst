@@ -72,6 +72,7 @@ export default function HistoryPage() {
                         variant="ghost" 
                         size="icon" 
                         className="h-6 w-6 text-[rgb(var(--text-tertiary))] hover:text-red-500"
+                        aria-label="Delete report"
                         onClick={(e) => {
                           e.preventDefault();
                           removeHistory(item.id);
