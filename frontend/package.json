@@ -3,12 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+<<<<<<< HEAD
   "dev": "next dev",
   "build": "next build",
   "start": "next start",
   "lint": "next lint"
 },
 
+=======
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+>>>>>>> bc7f3ac (Continue Verdict v1.0 development)
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-avatar": "^1.1.0",
@@ -24,7 +32,11 @@
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.0",
     "lucide-react": "^0.468.0",
+<<<<<<< HEAD
     "next": "15.3.3",
+=======
+    "next": "^15.5.20",
+>>>>>>> bc7f3ac (Continue Verdict v1.0 development)
     "next-themes": "^0.4.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

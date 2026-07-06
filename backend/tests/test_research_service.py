@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 import pytest
 from unittest.mock import patch, MagicMock
+=======
+from unittest.mock import patch
+>>>>>>> bc7f3ac (Continue Verdict v1.0 development)
 from app.services.research_service import ResearchService
 
 @patch("app.services.research_service.YahooFinanceTool")
