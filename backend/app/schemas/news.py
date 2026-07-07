@@ -9,3 +9,4 @@ class NewsArticle(BaseModel):
     summary: Optional[str] = None
     provider: str
     relevance_score: Optional[float] = None
+    sentiment: Optional[str] = None

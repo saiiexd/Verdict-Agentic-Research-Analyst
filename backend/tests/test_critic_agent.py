@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import pytest
-=======
->>>>>>> bc7f3ac (Continue Verdict v1.0 development)
 from unittest.mock import MagicMock
 from app.agents.critic_agent import CriticAgent
 from app.schemas.report import ResearchReport

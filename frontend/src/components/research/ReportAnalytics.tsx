@@ -209,10 +209,20 @@ export function EvidenceConfidenceGauge({ score }: { score: number }) {
  * Execution metrics workflow log panel
  */
 export function WorkflowAnalyticsPanel({ reportData }: { reportData: ResearchResponse }) {
+  const duration = reportData.metadata?.duration 
+    ? `${reportData.metadata.duration} seconds` 
+    : "~42 seconds";
+  const agentCount = reportData.metadata?.agent_count 
+    ? `${reportData.metadata.agent_count} Active Agents` 
+    : "5 Active Agents";
+  const modelInfo = reportData.metadata?.model_info
+    ? reportData.metadata.model_info
+    : "GEMINI (gemini-2.5-pro)";
+
   const metrics = [
-    { label: "Pipeline Duration", value: "~42 seconds", icon: Clock },
-    { label: "Orchestration Nodes", value: "5 Active Agents", icon: Cpu },
-    { label: "Logic Validation", value: "Verified Success", icon: ShieldCheck },
+    { label: "Pipeline Duration", value: duration, icon: Clock },
+    { label: "Orchestration Nodes", value: agentCount, icon: Cpu },
+    { label: "Model Info", value: modelInfo, icon: ShieldCheck },
     { label: "Hallucination Risk", value: reportData.critic_report?.hallucination_risk ? "Low Audit" : "None", icon: Layers }
   ];
 

@@ -21,6 +21,10 @@ class YahooFinanceTool:
                 f"Ticker '{ticker}' was not found."
             )
 
+        recommendation = info.get("recommendationKey")
+        if recommendation:
+            recommendation = recommendation.replace("_", " ").title()
+
         return FinancialData(
             ticker=ticker.upper(),
             company_name=info.get("longName"),
@@ -35,4 +39,12 @@ class YahooFinanceTool:
             revenue_growth=info.get("revenueGrowth"),
             debt_to_equity=info.get("debtToEquity"),
             currency=info.get("currency"),
+            revenue=info.get("totalRevenue"),
+            gross_margin=info.get("grossMargins"),
+            roe=info.get("returnOnEquity"),
+            fifty_two_week_high=info.get("fiftyTwoWeekHigh"),
+            fifty_two_week_low=info.get("fiftyTwoWeekLow"),
+            dividend_yield=info.get("dividendYield"),
+            beta=info.get("beta"),
+            analyst_recommendation=recommendation,
         )

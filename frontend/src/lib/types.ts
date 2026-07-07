@@ -65,6 +65,12 @@ export const ResearchResponseSchema = z.object({
   draft_report: ResearchReportSchema.optional(),
   critic_report: CriticReportSchema.optional(),
   final_report: ResearchReportSchema.optional(),
+  metadata: z.object({
+    duration: z.number().optional(),
+    agent_count: z.number().optional(),
+    status: z.string().optional(),
+    model_info: z.string().optional()
+  }).optional(),
 });
 
 export type FinancialData = z.infer<typeof FinancialDataSchema>;

@@ -15,3 +15,11 @@ class FinancialData(BaseModel):
     revenue_growth: float | None = None
     debt_to_equity: float | None = None
     currency: str | None = None
+    revenue: int | None = None
+    gross_margin: float | None = None
+    roe: float | None = None
+    fifty_two_week_high: float | None = None
+    fifty_two_week_low: float | None = None
+    dividend_yield: float | None = None
+    beta: float | None = None
+    analyst_recommendation: str | None = None

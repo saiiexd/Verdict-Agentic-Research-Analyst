@@ -22,11 +22,15 @@ class ResearchService:
             "citations": [],
         }
 
+        import time
+        from app.config.settings import settings
+        start_time = time.time()
         logger.info(f"Starting LangGraph workflow for {ticker}")
 
         result = graph.invoke(initial_state)
 
-        logger.info(f"LangGraph workflow completed for {ticker}")
+        duration = round(time.time() - start_time, 2)
+        logger.info(f"LangGraph workflow completed for {ticker} in {duration}s")
 
         return {
             "ticker": result["ticker"],
@@ -35,4 +39,10 @@ class ResearchService:
             "draft_report": result["report"],
             "critic_report": result["critic_report"],
             "final_report": result["final_report"],
+            "metadata": {
+                "duration": duration,
+                "agent_count": 5,
+                "status": "success",
+                "model_info": f"{settings.LLM_PROVIDER.upper()} ({settings.LLM_MODEL})"
+            }
         }

@@ -576,7 +576,7 @@ Confidence: ${reportData.critic_report?.overall_score || "N/A"}
                       <SentimentDistributionChart articles={reportData.news || []} />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <EvidenceConfidenceGauge score={reportData.critic_report?.overall_score || 0} />
+                      <EvidenceConfidenceGauge score={(reportData.critic_report?.overall_score || 0) * 10} />
                       <WorkflowAnalyticsPanel reportData={reportData} />
                     </div>
                     <ComparativeAnalysisView />

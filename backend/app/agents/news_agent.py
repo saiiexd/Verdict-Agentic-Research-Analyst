@@ -23,10 +23,29 @@ class NewsAgent(BaseAgent):
         merged_news = google_news + tavily_news
 
         cleaned_news = self.remove_duplicates(merged_news)
+        
+        # Classify sentiment of articles
+        for article in cleaned_news:
+            article.sentiment = self.determine_sentiment(article.title)
+
         ranked_news = self.rank_news(cleaned_news)
 
         logger.info(f"NewsAgent completed analysis for: {query}. Total articles: {len(ranked_news)}")
         return ranked_news
+
+    def determine_sentiment(self, title: str) -> str:
+        title_lower = title.lower()
+        bullish_words = ["soar", "gain", "buy", "up", "bullish", "positive", "growth", "beat", "surge", "higher", "rise", "expand", "profit", "record", "alliance", "partnership", "success", "innovate", "launch"]
+        bearish_words = ["fall", "drop", "down", "bearish", "negative", "loss", "lower", "decline", "warn", "miss", "risk", "investigate", "lawsuit", "control", "curb", "probe", "challenge", "threat", "concern"]
+        
+        bullish_score = sum(1 for word in bullish_words if word in title_lower)
+        bearish_score = sum(1 for word in bearish_words if word in title_lower)
+        
+        if bullish_score > bearish_score:
+            return "Bullish"
+        elif bearish_score > bullish_score:
+            return "Bearish"
+        return "Neutral"
 
     def remove_duplicates(
         self,

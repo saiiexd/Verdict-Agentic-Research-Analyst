@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import pytest
-=======
->>>>>>> bc7f3ac (Continue Verdict v1.0 development)
 from unittest.mock import patch, MagicMock
 from app.tools.tavily_search import TavilyTool
 
