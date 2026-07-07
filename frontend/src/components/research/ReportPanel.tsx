@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { adaptReport } from "@/lib/reportAdapter";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   FileText, 
@@ -40,8 +41,7 @@ import {
   SentimentDistributionChart, 
   ValuationMetricsChart, 
   EvidenceConfidenceGauge, 
-  WorkflowAnalyticsPanel, 
-  ComparativeAnalysisView 
+  WorkflowAnalyticsPanel 
 } from "./ReportAnalytics";
 import { EmptyReport } from "./EmptyReport";
 
@@ -106,6 +106,8 @@ export function ReportPanel({ reportData, status = "Idle", stages, error, onRetr
 
   const isReadingMode = useAppStore((state) => state.isReadingMode);
   const toggleReadingMode = useAppStore((state) => state.toggleReadingMode);
+  
+  const adaptedReport = useMemo(() => adaptReport(reportData?.final_report), [reportData]);
 
   const [activeSection, setActiveSection] = useState("summary");
   const [searchQuery, setSearchQuery] = useState("");
@@ -206,7 +208,7 @@ export function ReportPanel({ reportData, status = "Idle", stages, error, onRetr
 Verdict Research Report: ${reportData.ticker}
 Company: ${reportData.financial_data?.company_name || ""}
 AI Recommendation: ${reportData.critic_report?.recommendation || ""}
-Executive Summary: ${reportData.final_report?.company_overview || ""}
+Executive Summary: ${adaptedReport.executiveSummary || ""}
     `;
     navigator.clipboard.writeText(reportText.trim());
     showToast("Report summary copied to clipboard.");
@@ -216,12 +218,24 @@ Executive Summary: ${reportData.final_report?.company_overview || ""}
     if (!reportData) return;
     const markdownContent = `
 # Verdict Analysis Report: ${reportData.ticker}
-## Executive Summary
-${reportData.final_report?.company_overview || "N/A"}
 
-## Recommendation
-${reportData.critic_report?.recommendation || "N/A"}
-Confidence: ${reportData.critic_report?.overall_score || "N/A"}
+## Executive Summary
+${adaptedReport.executiveSummary || "N/A"}
+
+## Investment Thesis
+${adaptedReport.investmentThesis || "N/A"}
+
+## Financial Analysis
+${adaptedReport.financialAnalysis || "N/A"}
+
+## News Intelligence
+${adaptedReport.newsIntelligence || "N/A"}
+
+## Opportunities
+${adaptedReport.opportunities || "N/A"}
+
+## Risk Assessment
+${adaptedReport.riskAssessment || "N/A"}
     `;
     const blob = new Blob([markdownContent.trim()], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
@@ -500,60 +514,71 @@ Confidence: ${reportData.critic_report?.overall_score || "N/A"}
               </motion.div>
 
               {/* Executive Summary */}
-              {reportData.final_report?.company_overview && (
+              {adaptedReport.executiveSummary && (
                 <motion.div id="summary" variants={sectionVariants} className="scroll-mt-28">
                   <ExpandableSection 
                     title="Executive Summary" 
                     id="summary" 
                     isExpanded={expandedSections.summary} 
                     onToggle={() => toggleSection("summary")}
-                    copyText={reportData.final_report.company_overview}
+                    copyText={adaptedReport.executiveSummary}
                     showToast={showToast}
                   >
                     <p className="text-title font-normal leading-relaxed text-[rgb(var(--text-secondary))] text-balance">
-                      <HighlightText text={reportData.final_report.company_overview} highlight={searchQuery} />
+                      <HighlightText text={adaptedReport.executiveSummary} highlight={searchQuery} />
                     </p>
                   </ExpandableSection>
                 </motion.div>
               )}
 
-              {/* Investment Thesis Card */}
-              {reportData.critic_report && (
+              {/* Investment Thesis */}
+              {(reportData.critic_report || adaptedReport.investmentThesis) && (
                 <motion.div id="thesis" variants={sectionVariants} className="scroll-mt-28">
                   <ExpandableSection 
                     title="Investment Thesis" 
                     id="thesis" 
                     isExpanded={expandedSections.thesis} 
                     onToggle={() => toggleSection("thesis")}
-                    copyText={reportData.critic_report.recommendation}
+                    copyText={adaptedReport.investmentThesis || reportData.critic_report?.recommendation}
                     showToast={showToast}
                   >
-                    <InvestmentThesisCard criticReport={reportData.critic_report} searchQuery={searchQuery} />
+                    <div className="space-y-4">
+                      {reportData.critic_report && (
+                        <InvestmentThesisCard criticReport={reportData.critic_report} searchQuery={searchQuery} />
+                      )}
+                      {adaptedReport.investmentThesis && (
+                        <p className="text-body text-[rgb(var(--text-secondary))] leading-relaxed pt-2">
+                          <HighlightText text={adaptedReport.investmentThesis} highlight={searchQuery} />
+                        </p>
+                      )}
+                    </div>
                   </ExpandableSection>
                 </motion.div>
               )}
 
               {/* Financial Analysis */}
-              {reportData.financial_data && (
+              {(reportData.financial_data || adaptedReport.financialAnalysis) && (
                 <motion.div id="financials" variants={sectionVariants} className="scroll-mt-28">
                   <ExpandableSection 
                     title="Financial Analysis" 
                     id="financials" 
                     isExpanded={expandedSections.financials} 
                     onToggle={() => toggleSection("financials")}
-                    copyText={reportData.final_report?.financial_analysis}
+                    copyText={adaptedReport.financialAnalysis}
                     showToast={showToast}
                   >
                     <div className="space-y-4">
-                      <MetadataPanel 
-                        financialData={reportData.financial_data} 
-                        activeTag={activeTag} 
-                        setActiveTag={setActiveTag} 
-                      />
+                      {reportData.financial_data && (
+                        <MetadataPanel 
+                          financialData={reportData.financial_data} 
+                          activeTag={activeTag} 
+                          setActiveTag={setActiveTag} 
+                        />
+                      )}
                       
-                      {reportData.final_report?.financial_analysis && (
+                      {adaptedReport.financialAnalysis && (
                         <p className="text-body text-[rgb(var(--text-secondary))] leading-relaxed pt-2">
-                          <HighlightText text={reportData.final_report.financial_analysis} highlight={searchQuery} />
+                          <HighlightText text={adaptedReport.financialAnalysis} highlight={searchQuery} />
                         </p>
                       )}
                     </div>
@@ -579,42 +604,41 @@ Confidence: ${reportData.critic_report?.overall_score || "N/A"}
                       <EvidenceConfidenceGauge score={(reportData.critic_report?.overall_score || 0) * 10} />
                       <WorkflowAnalyticsPanel reportData={reportData} />
                     </div>
-                    <ComparativeAnalysisView />
                   </div>
                 </ExpandableSection>
               </motion.div>
 
               {/* Market News Analysis */}
-              {reportData.final_report?.recent_news_summary && (
+              {adaptedReport.newsIntelligence && (
                 <motion.div id="news" variants={sectionVariants} className="scroll-mt-28">
                   <ExpandableSection 
                     title="Market News Intelligence" 
                     id="news" 
                     isExpanded={expandedSections.news} 
                     onToggle={() => toggleSection("news")}
-                    copyText={reportData.final_report.recent_news_summary}
+                    copyText={adaptedReport.newsIntelligence}
                     showToast={showToast}
                   >
                     <p className="text-body text-[rgb(var(--text-secondary))] leading-relaxed whitespace-pre-wrap">
-                      <HighlightText text={reportData.final_report.recent_news_summary} highlight={searchQuery} />
+                      <HighlightText text={adaptedReport.newsIntelligence} highlight={searchQuery} />
                     </p>
                   </ExpandableSection>
                 </motion.div>
               )}
 
               {/* Research Evidence */}
-              {(reportData.final_report?.opportunities || reportData.critic_report?.strengths) && (
+              {(adaptedReport.opportunities || reportData.critic_report?.strengths) && (
                 <motion.div id="evidence" variants={sectionVariants} className="scroll-mt-28">
                   <ExpandableSection 
                     title="Research Evidence" 
                     id="evidence" 
                     isExpanded={expandedSections.evidence} 
                     onToggle={() => toggleSection("evidence")}
-                    copyText={reportData.final_report?.opportunities}
+                    copyText={adaptedReport.opportunities}
                     showToast={showToast}
                   >
                     <ResearchEvidence 
-                      opportunities={reportData.final_report?.opportunities} 
+                      opportunities={adaptedReport.opportunities} 
                       strengths={reportData.critic_report?.strengths} 
                       activeTag={activeTag}
                       setActiveTag={setActiveTag}
@@ -625,18 +649,18 @@ Confidence: ${reportData.critic_report?.overall_score || "N/A"}
               )}
 
               {/* Risk Assessment */}
-              {(reportData.final_report?.risks || reportData.critic_report?.weaknesses) && (
+              {(adaptedReport.riskAssessment || reportData.critic_report?.weaknesses) && (
                 <motion.div id="risks" variants={sectionVariants} className="scroll-mt-28">
                   <ExpandableSection 
                     title="Risk Assessment" 
                     id="risks" 
                     isExpanded={expandedSections.risks} 
                     onToggle={() => toggleSection("risks")}
-                    copyText={reportData.final_report?.risks}
+                    copyText={adaptedReport.riskAssessment}
                     showToast={showToast}
                   >
                     <RiskAssessment 
-                      risks={reportData.final_report?.risks} 
+                      risks={adaptedReport.riskAssessment} 
                       weaknesses={reportData.critic_report?.weaknesses} 
                       activeTag={activeTag}
                       setActiveTag={setActiveTag}
@@ -797,10 +821,16 @@ function ExpandableSection({
 }
 
 function ReportMetadataPanel({ reportData }: { reportData: ResearchResponse }) {
+  const modelInfo = reportData.metadata?.model_info || "Verdict Core v1.5";
+  const rawRisk = reportData.critic_report?.hallucination_risk || "";
+  const riskStatus = rawRisk.toLowerCase().includes("high") 
+    ? "High Risk" 
+    : (rawRisk.toLowerCase().includes("low") ? "Low Risk" : "Audited");
+
   const metaItems = [
     { label: "Pipeline Status", value: "Workflow Verified", icon: CheckCircle2, color: "text-emerald-500" },
-    { label: "Core Model", value: "Verdict Core v1.5", icon: Brain, color: "text-[rgb(var(--accent-primary))]" },
-    { label: "Audit Rating", value: reportData.critic_report?.hallucination_risk ? "Audited Low" : "Audited", icon: Info, color: "text-[rgb(var(--text-secondary))]" },
+    { label: "Core Model", value: modelInfo, icon: Brain, color: "text-[rgb(var(--accent-primary))]" },
+    { label: "Audit Rating", value: riskStatus, icon: Info, color: "text-[rgb(var(--text-secondary))]" },
   ];
 
   return (
@@ -812,7 +842,7 @@ function ReportMetadataPanel({ reportData }: { reportData: ResearchResponse }) {
           </div>
           <div>
             <span className="text-[9px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))] block">{item.label}</span>
-            <span className="font-semibold text-[rgb(var(--text-secondary))]">{item.value}</span>
+            <span className="font-semibold text-[rgb(var(--text-secondary))]" title={idx === 2 ? rawRisk : undefined}>{item.value}</span>
           </div>
         </div>
       ))}
@@ -861,7 +891,7 @@ function ResearchHeader({ reportData }: { reportData: ResearchResponse }) {
 }
 
 function InvestmentThesisCard({ criticReport, searchQuery }: { criticReport: CriticReport; searchQuery: string }) {
-  const score = criticReport.overall_score || 0;
+  const score = (criticReport.overall_score || 0) * 10;
 
   let label = "Hold";
   let colorClass = "text-amber-500 border-amber-500/20 bg-amber-500/5";

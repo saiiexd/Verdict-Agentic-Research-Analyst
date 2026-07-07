@@ -29,6 +29,9 @@ const COLORS = ["#10b981", "#64748b", "#ef4444"]; // Emerald, Slate, Red
 /**
  * Renders news sentiment analysis pie chart and breakdown
  */
+/**
+ * Renders news sentiment analysis pie chart and breakdown
+ */
 export function SentimentDistributionChart({ articles }: { articles: NewsArticle[] }) {
   const data = useMemo(() => {
     let positive = 0;
@@ -42,13 +45,8 @@ export function SentimentDistributionChart({ articles }: { articles: NewsArticle
       else neutral++;
     });
 
-    // Default mock distribution if list is empty
     if (articles.length === 0) {
-      return [
-        { name: "Positive", value: 4 },
-        { name: "Neutral", value: 3 },
-        { name: "Negative", value: 1 }
-      ];
+      return [];
     }
 
     return [
@@ -59,6 +57,18 @@ export function SentimentDistributionChart({ articles }: { articles: NewsArticle
   }, [articles]);
 
   const total = data.reduce((acc, curr) => acc + curr.value, 0);
+
+  if (articles.length === 0) {
+    return (
+      <div className="rounded-xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 flex flex-col items-center justify-center min-h-[220px] text-center">
+        <h4 className="text-subtitle font-bold text-[rgb(var(--text-primary))] self-start">Market Sentiment Analysis</h4>
+        <span className="text-[10px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))] self-start mb-6">
+          Collected news articles distribution
+        </span>
+        <span className="text-xs text-[rgb(var(--text-secondary))]">No news articles available for sentiment analysis.</span>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 space-y-4">
@@ -124,6 +134,22 @@ export function ValuationMetricsChart({ financialData }: { financialData: Financ
     ];
   }, [financialData]);
 
+  const hasData = useMemo(() => {
+    return financialData && (financialData.pe_ratio || financialData.roe || financialData.gross_margin || financialData.beta);
+  }, [financialData]);
+
+  if (!hasData) {
+    return (
+      <div className="rounded-xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 flex flex-col items-center justify-center min-h-[220px] text-center">
+        <h4 className="text-subtitle font-bold text-[rgb(var(--text-primary))] self-start">Performance Profile</h4>
+        <span className="text-[10px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))] self-start mb-6">
+          Comparative core valuation metrics
+        </span>
+        <span className="text-xs text-[rgb(var(--text-secondary))]">No financial metrics available.</span>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 space-y-4">
       <div>
@@ -164,6 +190,18 @@ export function EvidenceConfidenceGauge({ score }: { score: number }) {
   const normalizedRadius = radius - strokeWidth * 2;
   const circumference = normalizedRadius * 2 * Math.PI;
   const strokeDashoffset = circumference - (score / 100) * circumference;
+
+  if (!score) {
+    return (
+      <div className="rounded-xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 flex flex-col items-center justify-center min-h-[220px] text-center">
+        <h4 className="text-subtitle font-bold text-[rgb(var(--text-primary))] self-start">Evidence Validation</h4>
+        <span className="text-[10px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))] self-start mb-6">
+          Critic agent decision safety indicator
+        </span>
+        <span className="text-xs text-[rgb(var(--text-secondary))]">Validation score not available.</span>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 space-y-4 flex flex-col items-center justify-center text-center">
@@ -210,20 +248,23 @@ export function EvidenceConfidenceGauge({ score }: { score: number }) {
  */
 export function WorkflowAnalyticsPanel({ reportData }: { reportData: ResearchResponse }) {
   const duration = reportData.metadata?.duration 
-    ? `${reportData.metadata.duration} seconds` 
-    : "~42 seconds";
+    ? `${reportData.metadata.duration.toFixed(1)}s` 
+    : "N/A";
   const agentCount = reportData.metadata?.agent_count 
-    ? `${reportData.metadata.agent_count} Active Agents` 
-    : "5 Active Agents";
+    ? `${reportData.metadata.agent_count} Node Agents` 
+    : "5 Node Agents";
   const modelInfo = reportData.metadata?.model_info
     ? reportData.metadata.model_info
-    : "GEMINI (gemini-2.5-pro)";
+    : "N/A";
+
+  const rawRisk = reportData.critic_report?.hallucination_risk || "None";
+  const truncatedRisk = rawRisk.length > 20 ? rawRisk.substring(0, 18) + "..." : rawRisk;
 
   const metrics = [
-    { label: "Pipeline Duration", value: duration, icon: Clock },
-    { label: "Orchestration Nodes", value: agentCount, icon: Cpu },
-    { label: "Model Info", value: modelInfo, icon: ShieldCheck },
-    { label: "Hallucination Risk", value: reportData.critic_report?.hallucination_risk ? "Low Audit" : "None", icon: Layers }
+    { label: "Pipeline Duration", value: duration, icon: Clock, title: `Duration: ${duration}` },
+    { label: "Orchestration Nodes", value: agentCount, icon: Cpu, title: `Orchestrated: ${agentCount}` },
+    { label: "Model Info", value: modelInfo, icon: ShieldCheck, title: `Model: ${modelInfo}` },
+    { label: "Hallucination Risk", value: truncatedRisk, icon: Layers, title: rawRisk }
   ];
 
   return (
@@ -237,7 +278,7 @@ export function WorkflowAnalyticsPanel({ reportData }: { reportData: ResearchRes
 
       <div className="grid grid-cols-2 gap-4">
         {metrics.map((item, idx) => (
-          <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-[rgb(var(--bg-surface))] border border-[rgb(var(--border-default))]">
+          <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-[rgb(var(--bg-surface))] border border-[rgb(var(--border-default))]" title={item.title}>
             <div className="h-8 w-8 rounded bg-[rgb(var(--bg-subtle))] flex items-center justify-center flex-shrink-0 text-[rgb(var(--accent-primary))]">
               <item.icon className="h-4 w-4" />
             </div>

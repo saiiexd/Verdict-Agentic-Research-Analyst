@@ -39,7 +39,7 @@ This document provides complete instructions to set up the Verdict development e
 
    # Choose LLM Provider (e.g., openrouter, gemini, openai)
    LLM_PROVIDER=gemini
-   LLM_MODEL=gemini-2.5-pro
+   LLM_MODEL=gemini-2.5-flash
    LLM_API_KEY=your_llm_api_key_here
 
    # Tavily Search API

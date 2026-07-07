@@ -89,12 +89,12 @@ export function ResearchWorkspace({ className }: ResearchWorkspaceProps) {
             className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full"
           >
             {/* Left Column: AI Pipeline Orchestration visual list (Width: 4/12) */}
-            <div className={cn("lg:col-span-4 w-full", isReadingMode && "hidden")}>
+            <div className={cn("lg:col-span-4 w-full", (isReadingMode || isSuccess) && "hidden")}>
               <AgentWorkflow stages={stages} />
             </div>
 
             {/* Right Column: AI Research Report viewer panel output (Width: 8/12 or 12/12) */}
-            <div className={cn("w-full flex flex-col h-full", isReadingMode ? "lg:col-span-12" : "lg:col-span-8")}>
+            <div className={cn("w-full flex flex-col h-full", (isReadingMode || isSuccess) ? "lg:col-span-12" : "lg:col-span-8")}>
               <ReportPanel 
                 reportData={currentResearchData} 
                 status={researchStatus} 

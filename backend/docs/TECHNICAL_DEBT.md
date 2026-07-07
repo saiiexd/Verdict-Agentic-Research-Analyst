@@ -1,6 +1,0 @@
-# Technical Debt
-
-1. **Test Coverage of Real LLM APIs**: While unit tests cover the logic and error paths, end-to-end testing with VCR.py or similar network mocking would ensure the actual prompt integrations do not drift as the LLM models are updated. The current coverage sits at 81%, with the remaining 19% mostly containing explicit LLM invocation logic.
-2. **News Deduplication**: The duplicate removal in `NewsAgent` is extremely simple (lowercased exact title match). In the future, vector embedding or semantic similarity should be used to deduplicate highly similar articles from Google and Tavily.
-3. **Caching**: We repeatedly ping Yahoo Finance and Google News for the same tickers if requests come in rapidly. Implementing a Redis or simple memory cache at the Tool or Node layer would significantly improve response times and prevent rate limiting.
-4. **Synchronous Execution inside Nodes**: The `verify_workflow.py` execution shows the LangGraph nodes process synchronously on a single thread. Transitioning the tools to `async` and utilizing LangGraph's `ainvoke` could reduce total workflow execution time significantly (especially running Tavily and Google News queries concurrently inside `NewsAgent`).

@@ -64,4 +64,7 @@ Verdict decouple the research process into specialized cognitive agents running 
 
 ## 4. Engineering Documentation Index
 
-- [Documentation Index](./docs/FINAL_DOCUMENTATION_INDEX.md): Links to all architecture topologies, DevOps setup guides, testing strategies, security audits, and roadmaps.
+- [Development Setup Guide](./SETUP.md): Step-by-step instructions for local frontend and backend environment setup.
+- [System Architecture Specification](./ARCHITECTURE.md): Multi-agent orchestration layout and data-flow topology.
+- [Production Deployment Guide](./DEPLOYMENT.md): Deployment topology and hosting guide.
+- [API Reference Manual](./API.md): Documentation for the endpoints exposed by the FastAPI server.
