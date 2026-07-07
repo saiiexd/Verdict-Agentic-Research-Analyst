@@ -11,22 +11,19 @@ Verdict is structured as a decoupled application:
 
 ## 1. Backend Deployment (FastAPI)
 
-### Deploy to Render or Fly.io
-1. **Repository Link**: Connect your GitHub repository to your host platform.
-2. **Build Command**: No build step is required for raw python, or run dependency installation:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. **Start Command**: Run uvicorn/gunicorn binding to the host port:
-   ```bash
-   uvicorn app.main:app --host 0.0.0.0 --port $PORT
-   ```
+### Deploy to Render
+1. **Repository Link**: Connect your GitHub repository to your Render Dashboard via "Blueprints" or "Web Services".
+2. **Automated Setup (Blueprints)**: Render will automatically detect the `render.yaml` file in the repository root and provision the service. Simply apply the Blueprint and fill in the required Environment Variables in the Render Dashboard when prompted (`TAVILY_API_KEY`, `LLM_API_KEY`).
+3. **Manual Setup (Web Service)**: If you prefer manual setup:
+   - Root Directory: `backend`
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `gunicorn app.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT`
 4. **Environment Variables**:
    - `LLM_PROVIDER=gemini`
-   - `LLM_MODEL=gemini-2.5-flash`
+   - `LLM_MODEL=gemini-2.5-pro`
    - `LLM_API_KEY=your_gemini_api_key`
    - `TAVILY_API_KEY=your_tavily_api_key`
-   - `DATABASE_URL=sqlite:///./prod.db` (or a PostgreSQL URI for persistent workspace history)
+   - `ALLOWED_ORIGINS=https://your-frontend-domain.vercel.app` (to restrict CORS)
 
 ---
 

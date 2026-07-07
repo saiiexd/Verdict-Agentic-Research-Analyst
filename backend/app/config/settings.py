@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = True
 
+    # CORS Configuration
+    ALLOWED_ORIGINS: str = "*"
+
     # Search
     TAVILY_API_KEY: str = ""
 
