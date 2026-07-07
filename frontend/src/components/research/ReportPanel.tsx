@@ -5,7 +5,6 @@ import { useState, useEffect, useMemo } from "react";
 import { adaptReport } from "@/lib/reportAdapter";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  FileText, 
   ShieldAlert, 
   AlertTriangle, 
   ExternalLink,
