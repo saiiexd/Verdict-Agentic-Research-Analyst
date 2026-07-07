@@ -24,11 +24,7 @@ class ResearchService:
 
         logger.info(f"Starting LangGraph workflow for {ticker}")
 
-<<<<<<< HEAD
         result = graph.invoke(initial_state)
-=======
-        result = graph.invoke(initial_state) # type: ignore
->>>>>>> bc7f3ac (Continue Verdict v1.0 development)
 
         logger.info(f"LangGraph workflow completed for {ticker}")
 

@@ -1,8 +1,5 @@
 from fastapi import FastAPI
-<<<<<<< HEAD
-=======
 from fastapi.middleware.cors import CORSMiddleware
->>>>>>> bc7f3ac (Continue Verdict v1.0 development)
 from app.api.routes import router
 from app.config.settings import settings
 
@@ -11,8 +8,6 @@ app = FastAPI(
     version=settings.APP_VERSION,
 )
 
-<<<<<<< HEAD
-=======
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,5 +16,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
->>>>>>> bc7f3ac (Continue Verdict v1.0 development)
 app.include_router(router)

@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 from typing import Any
->>>>>>> bc7f3ac (Continue Verdict v1.0 development)
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.config.settings import settings
@@ -24,11 +21,7 @@ class GeminiProvider(AbstractLLMProvider):
 
         return str(response.content)
 
-<<<<<<< HEAD
-    def invoke_structured(self, prompt: str, schema: type) -> any:
-=======
     def invoke_structured(self, prompt: str, schema: Any) -> Any:
->>>>>>> bc7f3ac (Continue Verdict v1.0 development)
         if hasattr(self.llm, "with_structured_output"):
             try:
                 structured_llm = self.llm.with_structured_output(schema)
