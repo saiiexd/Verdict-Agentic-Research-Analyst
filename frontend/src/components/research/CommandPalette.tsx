@@ -190,6 +190,9 @@ export function CommandPalette() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-[15vh]">
           <motion.div
             ref={containerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Command Palette"
             initial={{ opacity: 0, scale: 0.96, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -10 }}
@@ -202,6 +205,10 @@ export function CommandPalette() {
               <input
                 ref={inputRef}
                 type="text"
+                role="combobox"
+                aria-expanded="true"
+                aria-controls="command-palette-results"
+                aria-autocomplete="list"
                 value={query}
                 onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0); }}
                 placeholder="Search commands, reports, and watchlists..."
@@ -213,7 +220,7 @@ export function CommandPalette() {
             </div>
 
             {/* Results display */}
-            <div className="flex-1 overflow-y-auto p-2 space-y-4">
+            <div id="command-palette-results" role="listbox" className="flex-1 overflow-y-auto p-2 space-y-4">
               {filteredCommands.length === 0 ? (
                 <p className="text-xs text-[rgb(var(--text-tertiary))] italic py-8 text-center select-none">
                   No matching workspace actions found.
@@ -238,6 +245,8 @@ export function CommandPalette() {
                             return (
                               <div
                                 key={cmd.id}
+                                role="option"
+                                aria-selected={isSelected}
                                 onClick={cmd.action}
                                 onMouseEnter={() => setSelectedIndex(indexInFlatList)}
                                 className={cn(

@@ -43,6 +43,7 @@ import {
   WorkflowAnalyticsPanel, 
   ComparativeAnalysisView 
 } from "./ReportAnalytics";
+import { EmptyReport } from "./EmptyReport";
 
 interface ReportPanelProps {
   reportData?: ResearchResponse | null;
@@ -288,17 +289,9 @@ Confidence: ${reportData.critic_report?.overall_score || "N/A"}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex-1 flex flex-col items-center justify-center text-center max-w-md mx-auto py-12"
+            className="flex-1 flex flex-col w-full h-full"
           >
-            <div className="h-14 w-14 rounded-2xl bg-[rgb(var(--bg-elevated))] border border-[rgb(var(--border-default))] flex items-center justify-center mb-6">
-              <FileText className="h-6 w-6 text-[rgb(var(--text-tertiary))]" />
-            </div>
-            <h2 className="text-title font-bold text-[rgb(var(--text-primary))] mb-2">
-              Workspace Idle
-            </h2>
-            <p className="text-body text-[rgb(var(--text-secondary))]">
-              Submit a company name or stock ticker above to start the multi-agent analysis workflow.
-            </p>
+            <EmptyReport />
           </motion.div>
         )}
 
