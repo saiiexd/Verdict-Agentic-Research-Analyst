@@ -13,10 +13,10 @@ router = APIRouter()
 research_service = ResearchService()
 
 
-@router.get("/")
-def root():
+@router.get("/health")
+def health():
     return {
-        "message": "Verdict Backend Running"
+        "status": "ok"
     }
 
 
