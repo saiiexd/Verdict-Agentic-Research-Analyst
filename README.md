@@ -1,3 +1,13 @@
+---
+title: Verdict
+emoji: 📈
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Verdict - Agentic AI Equity Research Platform
 
 ![Verdict AI Architecture](https://img.shields.io/badge/Status-Production_Ready-success)
