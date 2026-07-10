@@ -12,7 +12,7 @@ class DummyTicker:
 
 
 def test_get_company_info(monkeypatch):
-	def fake_ticker(ticker: str):
+	def fake_ticker(ticker: str, *args, **kwargs):
 		assert ticker == "NVDA"
 		return DummyTicker(ticker)
 
