@@ -820,7 +820,7 @@ function ExpandableSection({
 }
 
 function ReportMetadataPanel({ reportData }: { reportData: ResearchResponse }) {
-  const modelInfo = reportData.metadata?.model_info || "Verdict Core v1.5";
+  const modelInfo = reportData.metadata?.model_info || "Verdict Engine";
   const rawRisk = reportData.critic_report?.hallucination_risk || "";
   const riskStatus = rawRisk.toLowerCase().includes("high") 
     ? "High Risk" 
@@ -882,7 +882,7 @@ function ResearchHeader({ reportData }: { reportData: ResearchResponse }) {
           Generated on {dateStr}
         </p>
         <p className="text-caption font-mono text-[rgb(var(--text-tertiary))]">
-          Agent Execution Time: ~45s
+          Agent Execution Time: {reportData.metadata?.duration ? `${reportData.metadata.duration.toFixed(1)}s` : "~45s"}
         </p>
       </div>
     </header>
@@ -984,7 +984,7 @@ function MetadataPanel({
   const metrics = [
     { label: "Current Price", value: financialData.current_price ? `$${financialData.current_price}` : "—", icon: DollarSign, tag: "Valuation" },
     { label: "Market Cap", value: formatCurrency(financialData.market_cap), icon: Activity, tag: "Valuation" },
-    { label: "P/E Ratio", value: financialData.pe_ratio !== null ? financialData.pe_ratio : "—", icon: Layers, tag: "Valuation" },
+    { label: "P/E Ratio", value: financialData.pe_ratio !== null && financialData.pe_ratio !== undefined ? financialData.pe_ratio : "—", icon: Layers, tag: "Valuation" },
     { label: "Gross Margin", value: formatPercent(financialData.gross_margin), icon: TrendingUp, tag: "Profitability" },
     { label: "Revenue", value: formatCurrency(financialData.revenue), icon: DollarSign, tag: "Growth" },
     { label: "ROE", value: formatPercent(financialData.roe), icon: Activity, tag: "Profitability" },
@@ -1261,13 +1261,13 @@ function ReportFooter({ reportData }: { reportData: ResearchResponse }) {
   return (
     <footer className="border-t border-[rgb(var(--border-default))] pt-8 mt-12 text-center space-y-2 text-[10px] text-[rgb(var(--text-tertiary))] font-medium select-none print:mt-24">
       <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-        <span>Verdict Pipeline Core v1.5</span>
+        <span>{reportData.metadata?.model_info || "Verdict Engine"}</span>
         <span>•</span>
         <span>Validation Audited</span>
         <span>•</span>
         <span>Citations: {reportData.news?.length || 0} Sources</span>
         <span>•</span>
-        <span>Audit ID: {reportData.ticker.toUpperCase()}-VERIFIED</span>
+        <span>Audit ID: {reportData.ticker.toUpperCase()}-{reportData.metadata?.status === 'success' ? 'VERIFIED' : 'PENDING'}</span>
       </div>
       <p className="max-w-md mx-auto text-[9px] text-[rgb(var(--text-tertiary))]/60 leading-normal text-balance">
         Disclaimer: Automated AI equity synthesis reports are for informational and educational references only. No investment recommendations or securities trading advice are proposed.

@@ -126,17 +126,18 @@ export function SentimentDistributionChart({ articles }: { articles: NewsArticle
  */
 export function ValuationMetricsChart({ financialData }: { financialData: FinancialData }) {
   const data = useMemo(() => {
-    return [
-      { name: "P/E", value: financialData.pe_ratio || 0 },
-      { name: "ROE %", value: financialData.roe ? Math.round(financialData.roe * 100) : 0 },
-      { name: "Gross %", value: financialData.gross_margin ? Math.round(financialData.gross_margin * 100) : 0 },
-      { name: "Beta", value: financialData.beta ? Math.round(financialData.beta * 10) : 0 }, // Scaled for chart representation
+    const rawData = [
+      { name: "P/E", value: financialData.pe_ratio },
+      { name: "ROE %", value: financialData.roe ? Math.round(financialData.roe * 100) : null },
+      { name: "Gross %", value: financialData.gross_margin ? Math.round(financialData.gross_margin * 100) : null },
+      { name: "Beta", value: financialData.beta ? Math.round(financialData.beta * 10) : null },
     ];
+    return rawData.filter(item => item.value !== null && item.value !== undefined && item.value !== 0);
   }, [financialData]);
 
   const hasData = useMemo(() => {
-    return financialData && (financialData.pe_ratio || financialData.roe || financialData.gross_margin || financialData.beta);
-  }, [financialData]);
+    return financialData && data.length > 0;
+  }, [financialData, data]);
 
   if (!hasData) {
     return (

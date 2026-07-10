@@ -1,3 +1,4 @@
+import html
 from urllib.request import urlopen
 from xml.etree import ElementTree as ET
 
@@ -23,9 +24,12 @@ class GoogleNewsTool:
 
         articles = []
         for entry in root.findall("./channel/item")[:10]:
+            raw_title = entry.findtext("title", default="")
+            clean_title = html.unescape(raw_title)
+            
             articles.append(
                 NewsArticle(
-                    title=entry.findtext("title", default=""),
+                    title=clean_title,
                     url=entry.findtext("link", default=""),
                     source=None,
                     published_at=entry.findtext("pubDate"),
