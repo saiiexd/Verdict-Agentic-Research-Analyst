@@ -859,6 +859,18 @@ function ResearchHeader({ reportData }: { reportData: ResearchResponse }) {
     minute: '2-digit'
   });
 
+  const getExchangeLabel = () => {
+    const ex = reportData.financial_data?.exchange?.toUpperCase();
+    const t = reportData.ticker.split('.')[0].toUpperCase();
+    if (!ex) return t;
+    let name = ex;
+    if (ex.includes("NMS") || ex.includes("NASDAQ")) name = "NASDAQ";
+    else if (ex.includes("NYQ") || ex.includes("NYSE")) name = "NYSE";
+    else if (ex.includes("NSI") || ex.includes("NSE")) name = "NSE";
+    else if (ex.includes("BSE")) name = "BSE";
+    return `${name} : ${t}`;
+  };
+
   return (
     <header className="border-b border-[rgb(var(--border-default))] pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
@@ -873,7 +885,7 @@ function ResearchHeader({ reportData }: { reportData: ResearchResponse }) {
             {reportData.financial_data?.company_name || reportData.ticker}
           </h1>
           <span className="text-title font-mono text-[rgb(var(--text-tertiary))] select-none">
-            {reportData.ticker} {reportData.financial_data?.exchange ? `(${reportData.financial_data.exchange})` : ""}
+            {getExchangeLabel()}
           </span>
         </div>
       </div>
@@ -1234,7 +1246,7 @@ function CitationExplorer({ articles, searchQuery }: { articles: NewsArticle[]; 
                   <a 
                     href={art.url} 
                     target="_blank" 
-                    rel="noreferrer" 
+                    rel="noreferrer noopener" 
                     onClick={(e) => e.stopPropagation()}
                     className="text-[10px] font-semibold text-[rgb(var(--accent-primary))] hover:underline inline-flex items-center gap-1"
                   >
@@ -1256,11 +1268,7 @@ function ReportFooter({ reportData }: { reportData: ResearchResponse }) {
       <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
         <span>{reportData.metadata?.model_info || "Verdict Engine"}</span>
         <span>•</span>
-        <span>Validation Audited</span>
-        <span>•</span>
         <span>Citations: {reportData.news?.length || 0} Sources</span>
-        <span>•</span>
-        <span>Audit ID: {reportData.ticker.toUpperCase()}-{reportData.metadata?.status === 'success' ? 'VERIFIED' : 'PENDING'}</span>
       </div>
       <p className="max-w-md mx-auto text-[9px] text-[rgb(var(--text-tertiary))]/60 leading-normal text-balance">
         Disclaimer: Automated AI equity synthesis reports are for informational and educational references only. No investment recommendations or securities trading advice are proposed.

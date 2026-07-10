@@ -36,12 +36,12 @@ export function SentimentDistributionChart({ articles }: { articles: NewsArticle
 
     articles.forEach((art) => {
       const s = (art.sentiment || "").toLowerCase();
-      if (s.includes("pos")) positive++;
-      else if (s.includes("neg")) negative++;
+      if (s.includes("pos") || s.includes("bull")) positive++;
+      else if (s.includes("neg") || s.includes("bear")) negative++;
       else neutral++;
     });
 
-    if (articles.length === 0) {
+    if (articles.length === 0 || (positive === 0 && negative === 0 && neutral === articles.length)) {
       return [];
     }
 
@@ -61,7 +61,7 @@ export function SentimentDistributionChart({ articles }: { articles: NewsArticle
         <span className="text-[10px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))] self-start mb-6">
           Collected news articles distribution
         </span>
-        <span className="text-xs text-[rgb(var(--text-secondary))]">No news articles available for sentiment analysis.</span>
+        <span className="text-xs text-[rgb(var(--text-secondary))]">Sentiment undetermined or unavailable.</span>
       </div>
     );
   }
@@ -137,10 +137,15 @@ export function AdvancedMetricsPanel({ financialData }: { financialData: Financi
 
   return (
     <div className="rounded-xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 space-y-4 flex flex-col justify-between">
-      <div>
-        <h4 className="text-subtitle font-bold text-[rgb(var(--text-primary))]">Advanced Fundamentals</h4>
-        <span className="text-[10px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))]">
-          Key operational & risk metrics
+      <div className="flex justify-between items-start">
+        <div>
+          <h4 className="text-subtitle font-bold text-[rgb(var(--text-primary))]">Advanced Fundamentals</h4>
+          <span className="text-[10px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))]">
+            Key operational & risk metrics
+          </span>
+        </div>
+        <span className="text-[9px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))] mt-1 flex items-center gap-1 select-none">
+          <Clock className="h-3 w-3" /> Live Data
         </span>
       </div>
 
@@ -173,7 +178,10 @@ export function EvidenceConfidenceGauge({ score }: { score: number }) {
         <span className="text-[10px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))] self-start mb-6">
           Critic agent decision safety indicator
         </span>
-        <span className="text-xs text-[rgb(var(--text-secondary))]">Validation score not available.</span>
+        <div className="flex flex-col items-center justify-center text-[rgb(var(--text-tertiary))] space-y-2 flex-1">
+          <ShieldCheck className="h-8 w-8 opacity-40" />
+          <span className="text-xs font-semibold">Validation unavailable</span>
+        </div>
       </div>
     );
   }
