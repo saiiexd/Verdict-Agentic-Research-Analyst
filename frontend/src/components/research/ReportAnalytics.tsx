@@ -3,10 +3,6 @@
 import * as React from "react";
 import { useMemo } from "react";
 import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
   Tooltip, 
   ResponsiveContainer,
   PieChart,
@@ -122,61 +118,39 @@ export function SentimentDistributionChart({ articles }: { articles: NewsArticle
 }
 
 /**
- * Metric comparative breakdown chart
+ * Advanced Fundamentals Grid replacing the mathematically invalid comparative chart
  */
-export function ValuationMetricsChart({ financialData }: { financialData: FinancialData }) {
-  const data = useMemo(() => {
-    const rawData = [
-      { name: "P/E", value: financialData.pe_ratio },
-      { name: "ROE %", value: financialData.roe ? Math.round(financialData.roe * 100) : null },
-      { name: "Gross %", value: financialData.gross_margin ? Math.round(financialData.gross_margin * 100) : null },
-      { name: "Beta", value: financialData.beta ? Math.round(financialData.beta * 10) : null },
-    ];
-    return rawData.filter(item => item.value !== null && item.value !== undefined && item.value !== 0);
-  }, [financialData]);
+export function AdvancedMetricsPanel({ financialData }: { financialData: FinancialData }) {
+  const formatPercent = (val?: number | null) => {
+    if (val === undefined || val === null) return "—";
+    return `${(val * 100).toFixed(2)}%`;
+  };
 
-  const hasData = useMemo(() => {
-    return financialData && data.length > 0;
-  }, [financialData, data]);
-
-  if (!hasData) {
-    return (
-      <div className="rounded-xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 flex flex-col items-center justify-center min-h-[220px] text-center">
-        <h4 className="text-subtitle font-bold text-[rgb(var(--text-primary))] self-start">Performance Profile</h4>
-        <span className="text-[10px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))] self-start mb-6">
-          Comparative core valuation metrics
-        </span>
-        <span className="text-xs text-[rgb(var(--text-secondary))]">No financial metrics available.</span>
-      </div>
-    );
-  }
+  const data = [
+    { name: "Forward P/E", value: financialData.forward_pe !== null && financialData.forward_pe !== undefined ? financialData.forward_pe.toFixed(2) : "—" },
+    { name: "Operating Margin", value: formatPercent(financialData.operating_margin) },
+    { name: "Return on Assets", value: formatPercent(financialData.roa) },
+    { name: "Debt to Equity", value: financialData.debt_to_equity !== null && financialData.debt_to_equity !== undefined ? financialData.debt_to_equity.toFixed(2) : "—" },
+    { name: "Beta", value: financialData.beta !== null && financialData.beta !== undefined ? financialData.beta.toFixed(2) : "—" },
+    { name: "Dividend Yield", value: formatPercent(financialData.dividend_yield) }
+  ];
 
   return (
-    <div className="rounded-xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 space-y-4">
+    <div className="rounded-xl border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-elevated))] p-6 space-y-4 flex flex-col justify-between">
       <div>
-        <h4 className="text-subtitle font-bold text-[rgb(var(--text-primary))]">Performance Profile</h4>
+        <h4 className="text-subtitle font-bold text-[rgb(var(--text-primary))]">Advanced Fundamentals</h4>
         <span className="text-[10px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))]">
-          Comparative core valuation metrics
+          Key operational & risk metrics
         </span>
       </div>
 
-      <div className="h-44 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <XAxis dataKey="name" stroke="rgb(var(--text-tertiary))" fontSize={11} tickLine={false} />
-            <YAxis stroke="rgb(var(--text-tertiary))" fontSize={11} tickLine={false} />
-            <Tooltip 
-              cursor={{ fill: "rgba(var(--accent-primary-rgb), 0.05)" }}
-              contentStyle={{ 
-                background: "rgb(var(--bg-elevated))", 
-                border: "1px solid rgb(var(--border-default))",
-                borderRadius: "8px",
-                fontSize: "12px"
-              }} 
-            />
-            <Bar dataKey="value" fill="rgb(var(--accent-primary))" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 flex-1 pt-2">
+        {data.map((item, idx) => (
+          <div key={idx} className="flex flex-col p-3 rounded-lg border border-[rgb(var(--border-default))] bg-[rgb(var(--bg-surface))] justify-center">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-[rgb(var(--text-tertiary))] mb-1">{item.name}</span>
+            <span className="text-small font-extrabold text-[rgb(var(--text-primary))]">{item.value}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

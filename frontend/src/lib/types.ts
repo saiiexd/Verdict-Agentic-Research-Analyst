@@ -5,8 +5,8 @@ export const ResearchRequestSchema = z.object({
   ticker: z
     .string()
     .min(1, "Ticker is required")
-    .max(10, "Ticker must be 10 characters or fewer")
-    .regex(/^[A-Z]{1,5}$/, "Enter a valid ticker symbol (e.g. AAPL, NVDA)"),
+    .max(15, "Ticker must be 15 characters or fewer")
+    .regex(/^[A-Z0-9.-]+$/, "Enter a valid ticker symbol (e.g. AAPL, RELIANCE.NS)"),
 });
 export type ResearchRequest = z.infer<typeof ResearchRequestSchema>;
 
@@ -15,18 +15,27 @@ export const FinancialDataSchema = z.object({
   company_name: z.string().optional(),
   ticker: z.string(),
   current_price: z.number().optional(),
+  previous_close: z.number().optional(),
   market_cap: z.number().optional(),
   pe_ratio: z.number().nullable().optional(),
   eps: z.number().nullable().optional(),
   revenue: z.number().nullable().optional(),
   revenue_growth: z.number().nullable().optional(),
   gross_margin: z.number().nullable().optional(),
+  operating_margin: z.number().nullable().optional(),
   debt_to_equity: z.number().nullable().optional(),
   roe: z.number().nullable().optional(),
+  roa: z.number().nullable().optional(),
   fifty_two_week_high: z.number().optional(),
   fifty_two_week_low: z.number().optional(),
   dividend_yield: z.number().nullable().optional(),
   beta: z.number().nullable().optional(),
+  forward_pe: z.number().nullable().optional(),
+  enterprise_value: z.number().nullable().optional(),
+  currency: z.string().nullable().optional(),
+  financial_currency: z.string().nullable().optional(),
+  exchange: z.string().nullable().optional(),
+  quote_type: z.string().nullable().optional(),
   analyst_recommendation: z.string().optional(),
   sector: z.string().optional(),
   industry: z.string().optional(),

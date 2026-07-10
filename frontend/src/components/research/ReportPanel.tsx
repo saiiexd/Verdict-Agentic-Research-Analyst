@@ -8,7 +8,7 @@ import {
   ShieldAlert, 
   AlertTriangle, 
   ExternalLink,
-  DollarSign,
+  Banknote,
   Activity,
   Layers,
   TrendingUp,
@@ -38,10 +38,11 @@ import {
 } from "./LoadingComponents";
 import { 
   SentimentDistributionChart, 
-  ValuationMetricsChart, 
+  AdvancedMetricsPanel, 
   EvidenceConfidenceGauge, 
   WorkflowAnalyticsPanel 
 } from "./ReportAnalytics";
+import { formatCurrency } from "@/lib/utils/currencyFormatter";
 import { EmptyReport } from "./EmptyReport";
 
 interface ReportPanelProps {
@@ -596,7 +597,7 @@ ${adaptedReport.riskAssessment || "N/A"}
                 >
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <ValuationMetricsChart financialData={reportData.financial_data || { ticker: reportData.ticker }} />
+                      <AdvancedMetricsPanel financialData={reportData.financial_data || { ticker: reportData.ticker } as FinancialData} />
                       <SentimentDistributionChart articles={reportData.news || []} />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -872,7 +873,7 @@ function ResearchHeader({ reportData }: { reportData: ResearchResponse }) {
             {reportData.financial_data?.company_name || reportData.ticker}
           </h1>
           <span className="text-title font-mono text-[rgb(var(--text-tertiary))] select-none">
-            {reportData.ticker}
+            {reportData.ticker} {reportData.financial_data?.exchange ? `(${reportData.financial_data.exchange})` : ""}
           </span>
         </div>
       </div>
@@ -968,25 +969,17 @@ function MetadataPanel({
   activeTag: string | null;
   setActiveTag: (tag: string | null) => void;
 }) {
-  const formatCurrency = (val?: number | null) => {
-    if (val === undefined || val === null) return "—";
-    if (val >= 1e12) return `$${(val / 1e12).toFixed(2)}T`;
-    if (val >= 1e9) return `$${(val / 1e9).toFixed(2)}B`;
-    if (val >= 1e6) return `$${(val / 1e6).toFixed(2)}M`;
-    return `$${val.toLocaleString()}`;
-  };
-
   const formatPercent = (val?: number | null) => {
     if (val === undefined || val === null) return "—";
     return `${(val * 100).toFixed(2)}%`;
   };
 
   const metrics = [
-    { label: "Current Price", value: financialData.current_price ? `$${financialData.current_price}` : "—", icon: DollarSign, tag: "Valuation" },
-    { label: "Market Cap", value: formatCurrency(financialData.market_cap), icon: Activity, tag: "Valuation" },
-    { label: "P/E Ratio", value: financialData.pe_ratio !== null && financialData.pe_ratio !== undefined ? financialData.pe_ratio : "—", icon: Layers, tag: "Valuation" },
+    { label: "Current Price", value: formatCurrency(financialData.current_price, financialData.currency), icon: Banknote, tag: "Valuation" },
+    { label: "Market Cap", value: formatCurrency(financialData.market_cap, financialData.currency), icon: Activity, tag: "Valuation" },
+    { label: "P/E Ratio", value: financialData.pe_ratio !== null && financialData.pe_ratio !== undefined ? financialData.pe_ratio.toFixed(2) : "—", icon: Layers, tag: "Valuation" },
     { label: "Gross Margin", value: formatPercent(financialData.gross_margin), icon: TrendingUp, tag: "Profitability" },
-    { label: "Revenue", value: formatCurrency(financialData.revenue), icon: DollarSign, tag: "Growth" },
+    { label: "Revenue", value: formatCurrency(financialData.revenue, financialData.currency), icon: Banknote, tag: "Growth" },
     { label: "ROE", value: formatPercent(financialData.roe), icon: Activity, tag: "Profitability" },
   ];
 
