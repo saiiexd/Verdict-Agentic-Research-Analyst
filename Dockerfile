@@ -1,14 +1,3 @@
-FROM node:20-slim AS frontend-builder
-
-WORKDIR /frontend
-
-# Copy frontend code
-COPY frontend/package*.json ./
-RUN npm install
-
-COPY frontend/ ./
-RUN npm run build
-
 FROM python:3.12-slim
 
 WORKDIR /code
@@ -24,9 +13,6 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 # Copy backend app
 COPY backend/app /code/app
-
-# Copy built frontend
-COPY --from=frontend-builder /frontend/out /code/frontend
 
 # Hugging Face Spaces runs as user 1000
 RUN useradd -m -u 1000 user
