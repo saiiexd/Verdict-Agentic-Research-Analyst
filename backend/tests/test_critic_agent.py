@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import MagicMock
 from app.agents.critic_agent import CriticAgent
 from app.schemas.report import ResearchReport

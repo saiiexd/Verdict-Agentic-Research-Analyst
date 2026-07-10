@@ -3,10 +3,10 @@ from app.main import app
 
 client = TestClient(app)
 
-def test_root_endpoint():
-    response = client.get("/")
+def test_health_endpoint():
+    response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"message": "Verdict Backend Running"}
+    assert response.json() == {"status": "ok"}
 
 def test_research_endpoint_invalid_ticker():
     # Test that providing an invalid ticker yields a 404

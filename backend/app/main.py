@@ -20,7 +20,7 @@ app.add_middleware(
 
 app.include_router(router)
 
-frontend_path = os.path.join(os.path.dirname(__file__), "../../../frontend/out")
+frontend_path = os.path.join(os.path.dirname(__file__), "../../frontend/out")
 if os.path.exists("/code/frontend"):
     app.mount("/", StaticFiles(directory="/code/frontend", html=True), name="frontend")
 elif os.path.exists(frontend_path):

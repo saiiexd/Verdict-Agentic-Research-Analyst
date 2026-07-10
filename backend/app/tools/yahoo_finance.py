@@ -1,5 +1,4 @@
 import yfinance as yf  # type: ignore
-from typing import Dict, Any
 from app.schemas.financial import FinancialData
 from app.exceptions.research import InvalidTickerException
 from app.llm.retry import with_retry

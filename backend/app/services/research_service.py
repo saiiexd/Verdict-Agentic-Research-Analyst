@@ -10,7 +10,8 @@ class ResearchService:
         # Validate ticker early to fail fast and return 404
         financial_data = YahooFinanceTool().get_company_info(ticker)
 
-        initial_state = {
+        from app.graph.state import ResearchState
+        initial_state: ResearchState = {
             "ticker": ticker,
             "financial_data": financial_data,
             "news": [],

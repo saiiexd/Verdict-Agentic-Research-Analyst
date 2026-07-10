@@ -5,13 +5,15 @@ from app.config.settings import settings
 from app.llm.base import AbstractLLMProvider
 
 
+from pydantic import SecretStr
+
 class OpenRouterProvider(AbstractLLMProvider):
 
     def __init__(self):
 
         self.llm = ChatOpenAI(
             model=settings.LLM_MODEL,
-            api_key=settings.LLM_API_KEY,
+            api_key=SecretStr(settings.LLM_API_KEY) if settings.LLM_API_KEY else None, # type: ignore
             base_url="https://openrouter.ai/api/v1",
             temperature=0,
         )

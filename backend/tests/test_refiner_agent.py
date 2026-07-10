@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import MagicMock
 from app.agents.refiner_agent import RefinerAgent
 from app.schemas.report import ResearchReport
