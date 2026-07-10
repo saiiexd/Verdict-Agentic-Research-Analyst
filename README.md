@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚖️ Verdict
+# Verdict
 
 **The Open-Source Agentic Financial Intelligence Platform**
 
@@ -17,13 +17,13 @@
 
 Verdict is an autonomous, multi-agent financial research workspace that synthesizes real-time market data, global news sentiment, and algorithmic validation into institution-grade equity analysis reports. 
 
-[Live Demo](https://verdict-demo.vercel.app) • [API Documentation](#rest-api-documentation) • [Installation](#installation) • [Contributing](#contributing)
+[Live Demo](https://verdict-demo.vercel.app) • [API Documentation](#rest-api-documentation) • [Installation](#installation--local-development) • [Contributing](#contributing)
 
 </div>
 
 ---
 
-## 📖 Why Verdict Exists
+## Why Verdict Exists
 
 In the modern financial landscape, retail investors and independent analysts are heavily disadvantaged by information fragmentation. Conducting diligent equity research requires constantly context-switching between quantitative data terminals (like Bloomberg or Yahoo Finance), real-time news aggregators, SEC filing databases, and macro-economic trackers.
 
@@ -32,7 +32,7 @@ While Large Language Models (LLMs) promised to solve this, a single zero-shot pr
 **Verdict solves this through Agentic Orchestration.**
 Rather than relying on a single prompt, Verdict deploys a coordinated swarm of specialized AI Agents. We treat the LLM not as a knowledge base, but as a reasoning engine. Dedicated nodes fetch live data, draft analysis, relentlessly critique the findings for bias or hallucination, and iteratively refine the final report before it ever reaches the user interface.
 
-## 🚀 Product Overview
+## Product Overview
 
 Verdict serves as a unified workspace for financial intelligence. Upon entering a global equity ticker (e.g., `AAPL`, `RELIANCE.NS`), the application spins up a LangGraph execution pipeline on the backend. 
 
@@ -44,7 +44,7 @@ Within 45 seconds, the platform:
 5. Audits the thesis for hallucinations and logic holes using an antagonistic Critic Agent.
 6. Returns a validated, interactive dashboard featuring citation explorers, fundamental metric grids, and dynamic visualizations.
 
-### 📸 Screenshots
+### Screenshots
 
 | Homepage & Search | Analytics Dashboard |
 |:---:|:---:|
@@ -54,29 +54,29 @@ Within 45 seconds, the platform:
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🧠 AI Platform
+### AI Platform
 - **Multi-Agent Orchestration**: Powered by LangGraph, coordinating Financial, News, Writer, Critic, and Refiner agents.
 - **Antagonistic Validation**: Built-in hallucination prevention via a dedicated Critic Agent that enforces strict factual consistency.
 - **Structured Outputs**: 100% type-safe Pydantic/Zod schemas bridging the LLM output to the React UI.
 
-### 📈 Financial Intelligence
+### Financial Intelligence
 - **Global Equity Support**: Seamlessly handles US (NASDAQ, NYSE) and Indian (NSE, BSE) equities.
 - **Dynamic Localization**: Automatically formats currencies (USD vs INR) and scales (Millions/Billions/Trillions vs Lakhs/Crores) based on the asset origin.
 - **Advanced Fundamentals**: Tracks Forward P/E, Operating Margins, Return on Assets (ROA), Debt-to-Equity, and Beta natively.
 
-### 📰 News Intelligence
+### News Intelligence
 - **Real-Time Sentiment Analysis**: Analyzes recent headlines to categorize market sentiment as Bullish, Bearish, or Neutral.
 - **Citation Engine**: Every claim in the report is backed by explicitly linked, clickable source articles.
 
-### 🛠 Developer Experience
+### Developer Experience
 - **Strict Typing**: End-to-end TypeScript and Python type hinting.
 - **Automated Fallbacks**: Graceful degradation on rate limits and missing financial data keys.
 
 ---
 
-## 🏗 Architecture
+## Architecture
 
 Verdict utilizes a decoupled, modern web architecture. The Next.js frontend operates independently from the FastAPI execution engine, communicating strictly over structured REST payloads.
 
@@ -120,7 +120,7 @@ graph TD
     Refiner --> LLM
 ```
 
-### 🧬 LangGraph Workflow
+### LangGraph Workflow
 
 The execution pipeline is a deterministic state machine managed by LangGraph. It ensures parallel data extraction before sequential reasoning.
 
@@ -147,7 +147,7 @@ stateDiagram-v2
 
 ---
 
-## 🛠 Technology Stack
+## Technology Stack
 
 | Layer | Technologies | Purpose |
 |-------|-------------|---------|
@@ -161,7 +161,7 @@ stateDiagram-v2
 
 ---
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```text
 Verdict-Agentic-Research-Analyst/
@@ -188,7 +188,7 @@ Verdict-Agentic-Research-Analyst/
 
 ---
 
-## ⚙️ Installation & Local Development
+## Installation & Local Development
 
 ### Prerequisites
 - Node.js 20+
@@ -238,7 +238,7 @@ Visit `http://localhost:3000` in your browser.
 
 ---
 
-## 🔐 Environment Variables
+## Environment Variables
 
 | Variable | Location | Required | Description |
 |----------|----------|----------|-------------|
@@ -251,7 +251,7 @@ Visit `http://localhost:3000` in your browser.
 
 ---
 
-## 📖 Usage Guide
+## Usage Guide
 
 Verdict supports a massive array of global equities. Simply enter the correct ticker symbol in the search bar.
 
@@ -265,7 +265,7 @@ Verdict supports a massive array of global equities. Simply enter the correct ti
 
 ---
 
-## 📡 REST API Documentation
+## REST API Documentation
 
 ### `POST /api/v1/research`
 
@@ -320,7 +320,7 @@ Generates an end-to-end financial research report for a given ticker.
 
 ---
 
-## 📊 Report Anatomy
+## Report Anatomy
 
 Verdict automatically splits the unified LLM payload into modular, highly readable UI components:
 
@@ -333,7 +333,7 @@ Verdict automatically splits the unified LLM payload into modular, highly readab
 
 ---
 
-## 🛡 System Design & Reliability
+## System Design & Reliability
 
 ### Data Normalization & Fallbacks
 Verdict natively handles regional data disparities. If an asset is Indian (`INR`), the `CurrencyFormatter` dynamically shifts the mathematical formatting to **Lakhs** and **Crores** to match regional standards, completely dropping Western `M/B/T` formatting and the `$` sign.
@@ -345,7 +345,7 @@ All outbound LLM calls utilize a customized `@with_retry` wrapper that gracefull
 
 ---
 
-## 🐳 Deployment
+## Deployment
 
 Verdict is built for stateless, containerized deployment on serverless infrastructure.
 
@@ -364,7 +364,7 @@ Ensure you configure the `NEXT_PUBLIC_API_URL` environment variable on Vercel to
 
 ---
 
-## 🗺 Roadmap
+## Roadmap
 
 - **v1.1**: Add support for European Equities (LSE, FRA).
 - **v2.0**: Introduce Multi-Ticker Peer Comparison Pipelines (comparing multiple state graphs simultaneously).
@@ -372,7 +372,7 @@ Ensure you configure the `NEXT_PUBLIC_API_URL` environment variable on Vercel to
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions from the open-source community!
 
@@ -386,7 +386,7 @@ Please ensure you run `npm run lint` and `npm run build` locally before opening 
 
 ---
 
-## ❓ FAQ
+## FAQ
 
 **Q: Does Verdict provide financial advice?**  
 A: No. Verdict is a purely informational tool. It aggregates and synthesizes public data using LLMs. It is not a registered financial advisor.
@@ -399,13 +399,13 @@ A: If the underlying Yahoo Finance API does not track specific operational margi
 
 ---
 
-## 📄 License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-## 🙌 Credits & Acknowledgements
+## Credits & Acknowledgements
 
 Verdict is built on the shoulders of incredible open-source projects:
 - [LangGraph](https://langchain-ai.github.io/langgraph/)
@@ -415,5 +415,5 @@ Verdict is built on the shoulders of incredible open-source projects:
 
 ---
 
-**Developed with 🤍 by [saiiexd](https://github.com/saiiexd)**  
+**Developed with  by [saiiexd](https://github.com/saiiexd)**  
 [GitHub](https://github.com/saiiexd) • [Issues](https://github.com/saiiexd/Verdict-Agentic-Research-Analyst/issues)
