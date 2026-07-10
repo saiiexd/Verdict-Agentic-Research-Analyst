@@ -1,7 +1,8 @@
 import axios from "axios";
 import type { ResearchResponse } from "./types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+const RAW_URL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') ? "https://saiiexd-verdict.hf.space" : "http://localhost:8000");
+const BASE_URL = RAW_URL.replace(/\/+$/, "");
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,

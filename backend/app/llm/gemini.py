@@ -3,6 +3,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.config.settings import settings
 from app.llm.base import AbstractLLMProvider
+from app.llm.retry import with_retry
 
 
 class GeminiProvider(AbstractLLMProvider):
@@ -15,12 +16,14 @@ class GeminiProvider(AbstractLLMProvider):
             temperature=0,
         )
 
+    @with_retry(max_attempts=3, exceptions=(Exception,))
     def invoke(self, prompt: str) -> str:
 
         response = self.llm.invoke(prompt)
 
         return str(response.content)
 
+    @with_retry(max_attempts=3, exceptions=(Exception,))
     def invoke_structured(self, prompt: str, schema: Any) -> Any:
         if hasattr(self.llm, "with_structured_output"):
             try:

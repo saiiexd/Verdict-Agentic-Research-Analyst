@@ -42,8 +42,16 @@ def research(request: ResearchRequest):
             detail=str(e)
         )
     except Exception as e:
+        error_msg = str(e).lower()
         logger.error(f"Unexpected error during research for {request.ticker}: {str(e)}", exc_info=True)
+        
+        if "quota" in error_msg or "rate limit" in error_msg or "exhausted" in error_msg or "429" in error_msg:
+            raise HTTPException(
+                status_code=503,
+                detail="AI service quota exceeded or rate limited. Please try again later."
+            )
+            
         raise HTTPException(
             status_code=500,
-            detail="An internal server error occurred during research."
+            detail="An internal server error occurred during research execution."
         )

@@ -10,7 +10,23 @@ class YahooFinanceTool:
     Handles communication with Yahoo Finance.
     """
 
-    def get_company_info(self, ticker: str):
+    def _normalize_ticker(self, ticker: str) -> str:
+        ticker = ticker.upper().strip()
+        if "." in ticker:
+            return ticker
+        
+        indian_stocks = {
+            "RELIANCE", "TCS", "INFY", "SBIN", "HDFCBANK", "ICICIBANK", 
+            "LT", "WIPRO", "ITC", "BHARTIARTL", "AXISBANK", "MARUTI", "SUNPHARMA"
+        }
+        
+        if ticker in indian_stocks:
+            return f"{ticker}.NS"
+            
+        return ticker
+
+    def get_company_info(self, raw_ticker: str):
+        ticker = self._normalize_ticker(raw_ticker)
         logger.info(f"Fetching financial data for ticker: {ticker}")
         
         session = requests.Session()
@@ -23,23 +39,32 @@ class YahooFinanceTool:
         @with_retry(max_attempts=3, exceptions=(Exception,))
         def _fetch_info():
             stock = yf.Ticker(ticker, session=session)
-            return stock.info
+            info = stock.info
+            # yfinance returns {'regularMarketPrice': None, ...} or raises 404 for invalid tickers
+            if not info or ("longName" not in info and "shortName" not in info):
+                raise ValueError(f"Ticker '{ticker}' not found or has no valid profile.")
+            return info
 
         try:
             info = _fetch_info()
+        except ValueError as ve:
+            # Re-raise invalid ticker exception cleanly
+            raise InvalidTickerException(str(ve))
         except Exception as e:
-            logger.error(f"Yahoo Finance rate limit or connection error for {ticker}: {str(e)}. Using fallback financial profile.")
+            error_str = str(e)
+            if "404" in error_str:
+                raise InvalidTickerException(f"Ticker '{ticker}' was not found.")
+                
+            logger.error(f"Yahoo Finance rate limit or connection error for {ticker}: {error_str}. Using fallback financial profile.")
             return FinancialData(
-                ticker=ticker.upper(),
-                company_name=ticker.upper(),
-                sector="Technology" if ticker.upper() in ["AAPL", "MSFT", "NVDA"] else "N/A",
+                ticker=ticker,
+                company_name=ticker,
+                sector="Technology" if ticker in ["AAPL", "MSFT", "NVDA", "TCS.NS", "INFY.NS", "WIPRO.NS"] else "N/A",
                 industry="N/A"
             )
 
-        if not info or "longName" not in info:
-            raise InvalidTickerException(
-                f"Ticker '{ticker}' was not found."
-            )
+        if not info or ("longName" not in info and "shortName" not in info):
+            raise InvalidTickerException(f"Ticker '{ticker}' was not found.")
 
         recommendation = info.get("recommendationKey")
         if recommendation:
